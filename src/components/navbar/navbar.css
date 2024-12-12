@@ -1,0 +1,17 @@
+.navbar_icon span {
+  line-height: 1px;
+  word-spacing: -3px;
+  /* text-shadow: 5px 0px 3px rgba(0,0,0,0.3); */
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar_icon span:hover {
+  transform: scale(1.05);
+  /* text-shadow: 3px 0px 2px rgba(0,0,0,0.2); */
+}
+
+.navbar_btn link {
+  transition: all 0.3s ease-in-out;
+}
+
+/* .Navbar_section  */
