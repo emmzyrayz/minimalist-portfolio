@@ -51,32 +51,34 @@ const ExpTab: React.FC<ExpTabProps> = ({icon: Icon, name, color, date}) => {
 
   return (
     <div
-      className="relative flex bg-gray-400/40 rounded-lg shadow-md overflow-hidden group h-[180px] w-full cursor-pointer"
+      className="relative flex bg-gray-400/40 rounded-lg shadow-md overflow-hidden group h-full w-full cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
       tabIndex={0} // Make focusable
     >
-      <div className="absolute inset-0 flex flex-col items-center justify-center w-full p-2 gap-3">
-        <div className="exp-tab-top flex flex-row items-center justify-between w-full z-30">
-          <div className="exp flex flex-row items-center justify-center gap-3">
+      <div className=" md:inset-0 flex flex-col items-center justify-center w-full p-2 gap-3">
+        <div className="exp-tab-top flex flex-row items-center justify-center gap-2 h-full w-full z-30">
+          <div className="exp flex flex-row items-center justify-center md:gap-3 gap-1">
             {/*Exp Icon */}
             {/* If Icon is a function component (like FcGoogle or SVG component) */}
             {typeof Icon === "function" && (
-              <Icon className="text-xl text-[--white] z-30 transition-transform group-hover:scale-110" />
+              <Icon className="md:w-8 md:h-8 w-7 h-7 text-[--white] z-30 transition-transform group-hover:scale-110" />
             )}
 
             {/* Exp Name */}
-            <p className="text-lg font-semibold text-[--white] z-30">{name}</p>
+            <p className="md:text-lg md:font-semibold text-[12px] font-medium text-[--white] z-30">
+              {name}
+            </p>
           </div>
 
           {/* Exp Date */}
-          <div className="exp-date text-sm font-normal">
+          <div className="exp-date md:text-sm md:font-normal text-[11px] font-light">
             <span>{date}</span>
           </div>
         </div>
-        <div className="exp-desc text-sm font-light z-30">
+        <div className="exp-desc md:text-sm font-light text-[12px] z-30">
           <span>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem
             veniam corporis veritatis blanditiis nesciunt a voluptatem rerum

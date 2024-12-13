@@ -12,9 +12,13 @@ export const Contact = () => {
 
 
     return (
-      <div className="contact-section flex flex-row container mx-auto px-4 py-12 font-sora items-center justify-center gap-3 w-full h-full rounded-md">
-        <div className="contact-form w-1/2">
-          <form action="contact" method="post" className="flex flex-col gap-2">
+      <div className="contact-section flex flex-col md:flex-row container md:mx-auto md:px-4 md:py-12 font-sora items-center justify-center md:gap-3 gap-2 w-full h-full p-[4%] rounded-md">
+        <div className="contact-form md:w-1/2 w-full flex items-center justify-center md:items-start">
+          <form
+            action="contact"
+            method="post"
+            className="flex flex-col relative items-center justify-center md:items-start p-2 gap-2 w-full"
+          >
             <span className="name flex relative w-[80%]">
               {name === "" && (
                 <p className="absolute top-2 left-2 font-semibold text-[14px] text-gray-500 pointer-events-none">
@@ -70,36 +74,36 @@ export const Contact = () => {
               ></textarea>
             </span>
 
-            <div className="form-btn flex flex-row items-center justify-start gap-2">
+            <div className="form-btn flex flex-row w-full items-center md:justify-start justify-center gap-2">
               <button
                 type="submit"
-                className="p-3 flex rounded-md bg-[--black] text-[--white] font-semibold lg:text-[24px] border-[2px] border-[--black] md:text-[16px] hover:border-[--black] hover:bg-[--white] hover:text-[--black] transition-all duration-300 ease-in-out"
+                className="items-center justify-center p-2 flex rounded-md bg-[--black] text-[--white] md:font-bold font-semibold w-[120px] md:h-[40px] h-[30px] border-[2px] border-[--black] text-[14px] hover:border-[--black] hover:bg-[--white] hover:text-[--black] transition-all duration-300 ease-in-out"
               >
                 Get In Touch
               </button>
 
-              <div className="social_icons flex flex-row relative lg:gap-4 md:gap-2">
+              <div className="social_icons flex flex-row relative md:gap-4 gap-2">
                 <Link
                   href="#"
-                  className="flex lg:w-[50px] lg:h-[50px] md:w-[40px] md:h-[40px] items-center justify-center border-[2px] border-[--black] lg:text-[30px] md:text-[20px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--black] transition-all duration-300 ease-in-out"
+                  className="flex md:w-[40px] md:h-[40px] w-[30px] h-[30px] items-center justify-center border-[2px] border-[--black] lg:text-[30px] md:text-[20px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--black] transition-all duration-300 ease-in-out"
                 >
                   <FaFacebook />
                 </Link>
                 <Link
                   href="#"
-                  className="flex lg:w-[50px] lg:h-[50px] md:w-[40px] md:h-[40px] items-center justify-center border-[2px] border-[--black] lg:text-[30px] md:text-[20px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--black] transition-all duration-300 ease-in-out"
+                  className="flex  md:w-[40px] md:h-[40px] w-[30px] h-[30px] items-center justify-center border-[2px] border-[--black] lg:text-[30px] md:text-[20px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--black] transition-all duration-300 ease-in-out"
                 >
                   <FaReddit />
                 </Link>
                 <Link
                   href="#"
-                  className="flex lg:w-[50px] lg:h-[50px] md:w-[40px] md:h-[40px] items-center justify-center border-[2px] border-[--black] lg:text-[30px] md:text-[20px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--black] transition-all duration-300 ease-in-out"
+                  className="flex  md:w-[40px] md:h-[40px] w-[30px] h-[30px] items-center justify-center border-[2px] border-[--black] lg:text-[30px] md:text-[20px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--black] transition-all duration-300 ease-in-out"
                 >
                   <FaTwitter />
                 </Link>
                 <Link
                   href="#"
-                  className="flex lg:w-[50px] lg:h-[50px] md:w-[40px] md:h-[40px] items-center justify-center border-[2px] border-[--black] lg:text-[30px] md:text-[20px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--black] transition-all duration-300 ease-in-out"
+                  className="flex  md:w-[40px] md:h-[40px] w-[30px] h-[30px] items-center justify-center border-[2px] border-[--black] lg:text-[30px] md:text-[20px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--black] transition-all duration-300 ease-in-out"
                 >
                   <FaDiscord />
                 </Link>
@@ -107,10 +111,10 @@ export const Contact = () => {
             </div>
           </form>
         </div>
-        <div className="contact-text w-1/2 flex flex-col h-full gap-3">
-          <div className="text_head font-sora flex">
-            <span className="text-[--black] md:text-[36px] lg:text-[60px]">
-              <b className="md:font-bold lg:font-extrabold">
+        <div className="contact-text md:w-1/2 w-full flex flex-col items-center justify-center md:items-start h-full gap-3">
+          <div className="text_head font-sora flex w-full items-center justify-center md:justify-start">
+            <span className="text-[--black] md:text-[36px] text-[28px] lg:text-[60px]">
+              <b className="md:font-bold lg:font-extrabold font-semibold">
                 Let's{" "}
                 <span className="font-outline-2 text-[--white]">talk</span> for{" "}
                 <br />
@@ -118,13 +122,13 @@ export const Contact = () => {
               </b>{" "}
             </span>
           </div>
-          <div className="text-body text-[16px] font-normal opacity-55">
+          <div className="text-body text-[14px] md:text-[16px] md:w-full font-normal opacity-55 w-[70%]">
             <p>
               I seek to push the limits of creativity to create high-engaging,
               user-friendly, and memorable interactive experiences.
             </p>
           </div>
-          <div className="text-foot text-lg font-bold gap-3">
+          <div className="text-foot flex flex-col text-lg font-bold gap-3 w-full items-center justify-center md:items-start">
             <p className="email">MyEmail@gmail.com</p>
             <p className="phone">1234567890</p>
           </div>

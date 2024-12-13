@@ -77,7 +77,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
       {/* Description Container */}
       <div
-        className={`w-full md:w-1/2 
+        className={`w-full md:w-1/2 text-center 
         ${
           isEvenIndex ? "md:text-right md:pr-10" : "md:text-left md:pl-10"
         } space-y-4`}
@@ -93,7 +93,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
         {/* Technologies */}
         <div
-          className={`flex flex-wrap gap-2 
+          className={`flex flex-wrap gap-2 justify-center 
           ${isEvenIndex ? "md:justify-end" : "md:justify-start"}`}
         >
           {technologies.map((tech, index) => (
@@ -108,7 +108,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
         {/* Links */}
         <div
-          className={`flex gap-4 mt-4 
+          className={`flex gap-4 mt-4 justify-center
           ${isEvenIndex ? "md:justify-end" : "md:justify-start"}`}
         >
           {githubLink && (
