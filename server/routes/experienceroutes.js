@@ -5,7 +5,7 @@ const {
   updateExperience,
   deleteExperience,
   getExperiences,
-} = require("../controllers/experienceController");
+} = require("../controllers/experiencecontroller");
 const router = express.Router();
 
 router.post("/", authMiddleware, createExperience);
