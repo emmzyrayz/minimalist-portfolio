@@ -1,37 +1,72 @@
 const mongoose = require("mongoose");
 
 // User Model (for newsletter subscribers)
-// User Model (for newsletter subscribers)
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: [50, "Name cannot exceed 50 characters"],
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      match: [
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+        "Please provide a valid email address",
+      ],
+    },
+    password: {
+      type: String,
+      required: function () {
+        return this.role === "admin";
+      },
+      select: false, // Prevent password from being returned in queries
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin", "superadmin"],
+      default: "user",
+    },
+    subscribedToNewsletter: {
+      type: Boolean,
+      default: false,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    lastLogin: {
+      type: Date,
+      default: null,
+    },
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true,
-  },
-  password: {
-    type: String,
-    required: function() { return this.role === 'admin'; }, // Password required only for admin
-  },
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  subscribedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  {
+    // Add a method to check password
+    methods: {
+      async comparePassword(candidatePassword) {
+        return bcrypt.compare(candidatePassword, this.password);
+      },
+    },
+  }
+);
+
+// Pre-save hook to hash password
+UserSchema.pre("save", async function (next) {
+  // Only hash the password if it has been modified (or is new)
+  if (!this.isModified("password")) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Skill Model
