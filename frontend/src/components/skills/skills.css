@@ -1,0 +1,16 @@
+/* skills.css */
+
+@keyframes fadeInFromBottom {
+  0% {
+    transform: translateY(50px); /* Start slightly below */
+    opacity: 0; /* Start invisible */
+  }
+  100% {
+    transform: translateY(0); /* End at original position */
+    opacity: 1; /* Fully visible */
+  }
+}
+
+.fade-in {
+  animation: fadeInFromBottom 0.8s forwards; /* Animation duration */
+}

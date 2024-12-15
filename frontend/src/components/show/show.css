@@ -1,0 +1,82 @@
+/* show.css */
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(-100%);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-left {
+  animation: slideInLeft 1s forwards;
+}
+
+.slide-in-right {
+  animation: slideInRight 1s forwards;
+}
+
+.slide-out-left {
+  animation: slideInLeft 1s reverse forwards;
+}
+
+.slide-out-right {
+  animation: slideInRight 1s reverse forwards;
+}
+
+/* Add delay classes */
+.delay-0 {
+  animation-delay: 0s;
+}
+
+.delay-1 {
+  animation-delay: 0.2s;
+  /* 200ms delay */
+}
+
+.delay-2 {
+  animation-delay: 0.4s;
+  /* 400ms delay */
+}
+
+.delay-3 {
+  animation-delay: 0.6s;
+  /* 600ms delay */
+}
+
+.delay-4 {
+  animation-delay: 0.8s;
+  /* 800ms delay */
+}
+
+.delay-5 {
+  animation-delay: 1s;
+}

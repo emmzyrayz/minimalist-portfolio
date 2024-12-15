@@ -1,0 +1,109 @@
+
+
+/* :root {
+  font-size: calc(16px + (32 - 16) * (100vw - 320px) / (1280 - 320));
+} */
+
+.loading-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px; /* Height of the loading line */
+  background-color: var(--white); /* Color of the loading line */
+  width: 0; /* Start with 0 width */
+  transition: width 0.4s ease; /* Smooth transition for width change */
+  z-index: 9999; /* Ensure it is above other elements */
+}
+
+.pl {
+  background: linear-gradient(#000000 calc(50% + 1.5em), #4b4b4d calc(50% + 2.5em) calc(50% + 10.5em), #000000);
+  position: relative;
+  overflow: hidden;
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+.pl, .pl:before {
+  width: 100%;
+  height: 100%;
+}
+.pl:before, .pl__sphere, .pl__sphere-shadow {
+  position: absolute;
+}
+.pl:before, .pl__sphere-shadow {
+  display: block;
+}
+.pl:before {
+  background: linear-gradient(#808080, rgba(158, 158, 158, 0)), radial-gradient(100% 100% at 50% 50%, rgba(6, 39, 121, 0) 37.5%, #4e4e4e 50%), repeating-linear-gradient(0deg, rgba(163, 165, 168, 0) 0 0.95em, #b8b8b8 0.95em 1em), repeating-linear-gradient(90deg, rgba(8, 55, 170, 0) 0 0.9em, #5a5a5a 0.9em 1em) 0.5em 0;
+  content: "";
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateX(90deg) translateZ(-4em);
+  width: 34em;
+  height: 34em;
+}
+.pl__sphere {
+  animation-name: moveSphere;
+  background: #ffffff;
+  box-shadow: 0 -0.75em 0.5em #000000 inset, 0 0 0.5em rgba(255, 255, 255, 0.7);
+  transform: translateZ(10em);
+}
+.pl__sphere, .pl__sphere-shadow {
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  border-radius: 50%;
+  top: calc(50% - 1em);
+  left: calc(50% - 1em);
+  width: 2em;
+  height: 2em;
+  z-index: 1;
+}
+.pl__sphere-shadow {
+  animation-name: moveSphereShadow;
+  background-image: radial-gradient(100% 100% at center, rgba(0, 0, 0, 0.2) 45%, rgba(0, 0, 0, 0) 50%);
+  transform: translateY(4em) translateZ(10em) rotateX(90deg);
+}
+.pl__sphere:nth-of-type(1), .pl__sphere-shadow:nth-of-type(1) {
+  left: calc(50% - 5.5em);
+}
+.pl__sphere:nth-of-type(2), .pl__sphere-shadow:nth-of-type(2) {
+  left: calc(50% - 2.5em);
+  animation-delay: 0.1s;
+}
+.pl__sphere:nth-of-type(3), .pl__sphere-shadow:nth-of-type(3) {
+  left: calc(50% - -0.5em);
+  animation-delay: 0.2s;
+}
+.pl__sphere:nth-of-type(4), .pl__sphere-shadow:nth-of-type(4) {
+  left: calc(50% - -3.5em);
+  animation-delay: 0.3s;
+}
+
+@keyframes moveSphere {
+  from, to {
+    filter: brightness(100%) blur(0);
+    -webkit-filter: brightness(100%) blur(0);
+    transform: translateZ(10em);
+  }
+  25%, 75% {
+    filter: brightness(100%) blur(0);
+    -webkit-filter: brightness(100%) blur(0);
+    transform: translateZ(12em);
+  }
+  50% {
+    filter: brightness(80%) blur(4px);
+    -webkit-filter: brightness(80%) blur(4px);
+    transform: translateZ(-10em);
+  }
+}
+@keyframes moveSphereShadow {
+  from, to {
+    transform: translateY(4em) translateZ(10em) rotateX(90deg);
+  }
+  25%, 75% {
+    transform: translateY(4em) translateZ(12em) rotateX(90deg);
+  }
+  50% {
+    transform: translateY(4em) translateZ(-10em) rotateX(90deg);
+  }
+}

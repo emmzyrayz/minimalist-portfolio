@@ -5,11 +5,6 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
-# Ignore node_modules
-frontend/node_modules/
-server/node_modules/
-# Ignore all node_modules folders
-**/node_modules/
 
 # testing
 /coverage
