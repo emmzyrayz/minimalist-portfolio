@@ -4,22 +4,26 @@ import {
   LuHouse,
   LuMessageSquare,
   LuSettings,
-  LuChartColumnIncreasing,
-  LuUser,
+  // LuChartColumnIncreasing,
+  // LuUser,
   LuSend,
   LuPaperclip,
   LuX,
   LuMaximize2,
   LuMinimize2,
-  LuUpload,
-  LuPen,
+  // LuUpload,
+  // LuPen,
   LuTrash,
 } from "react-icons/lu";
 import './admin.css';
 
 // Types for different sections
-type Project = {
+// Define more precise interfaces with shared base properties
+interface BaseItem {
   id: string;
+}
+
+interface Project extends BaseItem {
   title: string;
   description: string;
   technologies: string[];
@@ -27,15 +31,13 @@ type Project = {
   liveLink?: string;
 };
 
-type Skill = {
-  id: string;
+interface Skill extends BaseItem {
   name: string;
   proficiency: number;
   category?: string;
 };
 
-type Experience = {
-  id: string;
+interface Experience extends BaseItem {
   company: string;
   position: string;
   startDate: string;
@@ -43,17 +45,15 @@ type Experience = {
   responsibilities: string[];
 };
 
-type Message = {
-  id: string;
+interface Message extends BaseItem {
   sender: "admin" | "visitor" | string;
   content: string;
   timestamp: string;
   attachments?: string[];
-  read: Boolean;
+  read: boolean;
 };
 
-type Visitor = {
-  id: string;
+interface Visitor extends BaseItem {
   name: string;
   timestamp: string;
 };
@@ -112,7 +112,7 @@ const ChatInterface: React.FC<{
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const sendMessage = () => {
     if (newMessage.trim() || attachments.length) {
@@ -244,62 +244,158 @@ const ChatInterface: React.FC<{
   );
 };
 
+// Union type for all possible items
+type PortfolioItem = Project | Skill | Experience;
+
+
 // Upload Form Modal Component
 const UploadModal: React.FC<{
-  type: 'project' | 'skill' | 'experience';
-  item?: Project | Skill | Experience;
+  type: "project" | "skill" | "experience";
+  item?: PortfolioItem;
   onClose: () => void;
-  onSave: (item: Project | Skill | Experience) => void;
-}> = ({ type, item, onClose, onSave }) => {
-  const [formData, setFormData] = useState<Project | Skill | Experience | any>(
-    item ||
-      {
-        project: {
+  onSave: (item: PortfolioItem) => void;
+}> = ({type, item, onClose, onSave}) => {
+  const [formData, setFormData] = useState<PortfolioItem>(() => {
+    if (item) return item;
+
+    switch (type) {
+      case "project":
+        return {
           id: "",
           title: "",
           description: "",
           technologies: [""],
           githubLink: "",
           liveLink: "",
-        },
-        skill: {
+        };
+      case "skill":
+        return {
           id: "",
           name: "",
           proficiency: 50,
           category: "",
-        },
-        experience: {
+        };
+      case "experience":
+        return {
           id: "",
           company: "",
           position: "",
           startDate: "",
           endDate: "",
           responsibilities: [""],
-        },
-      }[type]
-  );
+        };
+    }
+  });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  // Modified state update functions to handle type safety
+  // Type-safe input change handler
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const {name, value} = e.target;
 
-  const handleArrayChange = (field: string, index: number, value: string) => {
-    const updatedArray = [...formData[field]];
-    updatedArray[index] = value;
-    setFormData({ ...formData, [field]: updatedArray });
-  };
+    setFormData((prevData) => {
+      // Type-safe spread with type narrowing
+      if (type === "project") {
+        return {
+          ...prevData,
+          [name]: name === "technologies" ? [value] : value,
+        } as Project;
+      }
 
-  const addArrayItem = (field: string) => {
-    setFormData({ 
-      ...formData, 
-      [field]: [...formData[field], ''] 
+      if (type === "skill") {
+        return {
+          ...prevData,
+          [name]: name === "proficiency" ? Number(value) : value,
+        } as Skill;
+      }
+
+      if (type === "experience") {
+        return {
+          ...prevData,
+          [name]: name === "responsibilities" ? [value] : value,
+        } as Experience;
+      }
+
+      return prevData;
     });
   };
 
-  const removeArrayItem = (field: string, index: number) => {
-    const updatedArray = formData[field].filter((_: string, i: number) => i !== index);
-    setFormData({ ...formData, [field]: updatedArray });
+  // Type guard to narrow down the specific type
+  function isProject(item: BaseItem): item is Project {
+    return (item as Project).title !== undefined;
+  }
+
+  function isSkill(item: BaseItem): item is Skill {
+    return (item as Skill).name !== undefined;
+  }
+
+  function isExperience(item: BaseItem): item is Experience {
+    return (item as Experience).company !== undefined;
+  }
+
+  const handleArrayChange = (
+    field: "technologies" | "responsibilities",
+    index: number,
+    value: string
+  ) => {
+    setFormData((prevData) => {
+      if (type === "project" && field === "technologies") {
+        const technologies = [...(prevData as Project).technologies];
+        technologies[index] = value;
+        return {...prevData, technologies} as Project;
+      }
+
+      if (type === "experience" && field === "responsibilities") {
+        const responsibilities = [...(prevData as Experience).responsibilities];
+        responsibilities[index] = value;
+        return {...prevData, responsibilities} as Experience;
+      }
+
+      return prevData;
+    });
+  };
+
+  const addArrayItem = (field: "technologies" | "responsibilities") => {
+    setFormData((prevData) => {
+      if (type === "project" && field === "technologies") {
+        const technologies = [...(prevData as Project).technologies, ""];
+        return {...prevData, technologies} as Project;
+      }
+
+      if (type === "experience" && field === "responsibilities") {
+        const responsibilities = [
+          ...(prevData as Experience).responsibilities,
+          "",
+        ];
+        return {...prevData, responsibilities} as Experience;
+      }
+
+      return prevData;
+    });
+  };
+
+  const removeArrayItem = (
+    field: "technologies" | "responsibilities",
+    index: number
+  ) => {
+    setFormData((prevData) => {
+      if (type === "project" && field === "technologies") {
+        const technologies = (prevData as Project).technologies.filter(
+          (_, i) => i !== index
+        );
+        return {...prevData, technologies} as Project;
+      }
+
+      if (type === "experience" && field === "responsibilities") {
+        const responsibilities = (
+          prevData as Experience
+        ).responsibilities.filter((_, i) => i !== index);
+        return {...prevData, responsibilities} as Experience;
+      }
+
+      return prevData;
+    });
   };
 
   const handleSubmit = () => {
@@ -317,44 +413,46 @@ const UploadModal: React.FC<{
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white text-black p-6 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-4 capitalize">{type} Upload</h2>
-        
-        {type === 'project' && (
+
+        {type === "project" && (
           <>
             <input
               type="text"
               name="title"
-              value={formData.title}
+              value={(formData as Project).title}
               onChange={handleInputChange}
               placeholder="Project Title"
               className="w-full border p-2 rounded mb-2"
             />
             <textarea
               name="description"
-              value={formData.description}
+              value={(formData as Project).description}
               onChange={handleInputChange}
               placeholder="Project Description"
               className="w-full border p-2 rounded mb-2 h-24"
             />
             <div className="mb-2">
               <label>Technologies</label>
-              {formData.technologies.map((tech: string, index: number) => (
+              {(formData as Project).technologies.map((tech: string, index: number) => (
                 <div key={index} className="flex items-center mb-1">
                   <input
                     type="text"
                     value={tech}
-                    onChange={(e) => handleArrayChange('technologies', index, e.target.value)}
+                    onChange={(e) =>
+                      handleArrayChange("technologies", index, e.target.value)
+                    }
                     className="flex-grow border p-2 rounded mr-2"
                   />
-                  <button 
-                    onClick={() => removeArrayItem('technologies', index)}
+                  <button
+                    onClick={() => removeArrayItem("technologies", index)}
                     className="bg-black text-white p-2 rounded"
                   >
                     <LuTrash size={16} />
                   </button>
                 </div>
               ))}
-              <button 
-                onClick={() => addArrayItem('technologies')}
+              <button
+                onClick={() => addArrayItem("technologies")}
                 className="bg-black text-white p-2 rounded mt-2"
               >
                 Add Technology
@@ -363,7 +461,7 @@ const UploadModal: React.FC<{
             <input
               type="text"
               name="githubLink"
-              value={formData.githubLink}
+              value={(formData as Project).githubLink}
               onChange={handleInputChange}
               placeholder="GitHub Link"
               className="w-full border p-2 rounded mb-2"
@@ -371,7 +469,7 @@ const UploadModal: React.FC<{
             <input
               type="text"
               name="liveLink"
-              value={formData.liveLink}
+              value={(formData as Project).liveLink}
               onChange={handleInputChange}
               placeholder="Live Project Link"
               className="w-full border p-2 rounded mb-2"
@@ -379,12 +477,12 @@ const UploadModal: React.FC<{
           </>
         )}
 
-        {type === 'skill' && (
+        {type === "skill" && (
           <>
             <input
               type="text"
               name="name"
-              value={formData.name}
+              value={(formData as Skill).name}
               onChange={handleInputChange}
               placeholder="Skill Name"
               className="w-full border p-2 rounded mb-2"
@@ -394,18 +492,18 @@ const UploadModal: React.FC<{
               <input
                 type="range"
                 name="proficiency"
-                value={formData.proficiency}
+                value={(formData as Skill).proficiency}
                 onChange={handleInputChange}
                 min="0"
                 max="100"
                 className="w-full"
               />
-              <span>{formData.proficiency}%</span>
+              <span>{(formData as Skill).proficiency}%</span>
             </div>
             <input
               type="text"
               name="category"
-              value={formData.category}
+              value={(formData as Skill).category}
               onChange={handleInputChange}
               placeholder="Skill Category (Optional)"
               className="w-full border p-2 rounded mb-2"
@@ -413,12 +511,12 @@ const UploadModal: React.FC<{
           </>
         )}
 
-        {type === 'experience' && (
+        {type === "experience" && (
           <>
             <input
               type="text"
               name="company"
-              value={formData.company}
+              value={(formData as Experience).company}
               onChange={handleInputChange}
               placeholder="Company Name"
               className="w-full border p-2 rounded mb-2"
@@ -426,7 +524,7 @@ const UploadModal: React.FC<{
             <input
               type="text"
               name="position"
-              value={formData.position}
+              value={(formData as Experience).position}
               onChange={handleInputChange}
               placeholder="Position"
               className="w-full border p-2 rounded mb-2"
@@ -435,14 +533,14 @@ const UploadModal: React.FC<{
               <input
                 type="date"
                 name="startDate"
-                value={formData.startDate}
+                value={(formData as Experience).startDate}
                 onChange={handleInputChange}
                 className="w-full border p-2 rounded"
               />
               <input
                 type="date"
                 name="endDate"
-                value={formData.endDate}
+                value={(formData as Experience).endDate}
                 onChange={handleInputChange}
                 placeholder="End Date (Optional)"
                 className="w-full border p-2 rounded"
@@ -450,24 +548,30 @@ const UploadModal: React.FC<{
             </div>
             <div className="mb-2">
               <label>Responsibilities</label>
-              {formData.responsibilities.map((resp: string, index: number) => (
+              {(formData as Experience).responsibilities.map((resp: string, index: number) => (
                 <div key={index} className="flex items-center mb-1">
                   <input
                     type="text"
                     value={resp}
-                    onChange={(e) => handleArrayChange('responsibilities', index, e.target.value)}
+                    onChange={(e) =>
+                      handleArrayChange(
+                        "responsibilities",
+                        index,
+                        e.target.value
+                      )
+                    }
                     className="flex-grow border p-2 rounded mr-2"
                   />
-                  <button 
-                    onClick={() => removeArrayItem('responsibilities', index)}
+                  <button
+                    onClick={() => removeArrayItem("responsibilities", index)}
                     className="bg-black text-white p-2 rounded"
                   >
                     <LuTrash size={16} />
                   </button>
                 </div>
               ))}
-              <button 
-                onClick={() => addArrayItem('responsibilities')}
+              <button
+                onClick={() => addArrayItem("responsibilities")}
                 className="bg-black text-white p-2 rounded mt-2"
               >
                 Add Responsibility
@@ -477,13 +581,13 @@ const UploadModal: React.FC<{
         )}
 
         <div className="flex justify-end space-x-2 mt-4">
-          <button 
+          <button
             onClick={onClose}
             className="border border-black text-black p-2 rounded"
           >
             Cancel
           </button>
-          <button 
+          <button
             onClick={handleSubmit}
             className="bg-black text-white p-2 rounded"
           >
@@ -494,6 +598,7 @@ const UploadModal: React.FC<{
     </div>
   );
 };
+
 
 const PortfolioDashboard: React.FC = () => {
   // Active tab state
@@ -512,79 +617,6 @@ const PortfolioDashboard: React.FC = () => {
   } | null>(null);
 
   const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(null);
-
-  // Update the methods to handle null and type correctly
-  const handleUpload = (
-    item: Project | Skill | Experience,
-    type: "project" | "skill" | "experience"
-  ) => {
-    setSelectedUploadType(type);
-    setSelectedItem({type, item});
-  };
-
-  const handleEdit = (
-    item: Project | Skill | Experience,
-    type: "project" | "skill" | "experience"
-  ) => {
-    setSelectedUploadType(type);
-    setSelectedItem({type, item});
-  };
-
-  const handleSave = (item: Project | Skill | Experience) => {
-    if (!item) return;
-    switch (selectedItem?.type) {
-      case "project":
-        const projectIndex = projects.findIndex((p) => p.id === item.id);
-        if (projectIndex !== -1) {
-          const updatedProjects = [...projects];
-          updatedProjects[projectIndex] = item as Project;
-          setProjects(updatedProjects);
-        } else {
-          setProjects([...projects, item as Project]);
-        }
-        break;
-      case "skill":
-        const skillIndex = skills.findIndex((s) => s.id === item.id);
-        if (skillIndex !== -1) {
-          const updatedSkills = [...skills];
-          updatedSkills[skillIndex] = item as Skill;
-          setSkills(updatedSkills);
-        } else {
-          setSkills([...skills, item as Skill]);
-        }
-        break;
-      case "experience":
-        const expIndex = experiences.findIndex((e) => e.id === item.id);
-        if (expIndex !== -1) {
-          const updatedExperiences = [...experiences];
-          updatedExperiences[expIndex] = item as Experience;
-          setExperiences(updatedExperiences);
-        } else {
-          setExperiences([...experiences, item as Experience]);
-        }
-        break;
-    }
-
-    // Reset selected item
-    setSelectedItem(null);
-  };
-
-  const handleDelete = (
-    id: string,
-    type: "project" | "skill" | "experience"
-  ) => {
-    switch (type) {
-      case "project":
-        setProjects(projects.filter((p) => p.id !== id));
-        break;
-      case "skill":
-        setSkills(skills.filter((s) => s.id !== id));
-        break;
-      case "experience":
-        setExperiences(experiences.filter((e) => e.id !== id));
-        break;
-    }
-  };
 
   // Dummy data (you'll replace these with your actual data)
   const [projects, setProjects] = useState<Project[]>([
@@ -632,7 +664,7 @@ const PortfolioDashboard: React.FC = () => {
     },
   ]);
 
-  const [visitors, setVisitors] = useState<Visitor[]>([
+  const [visitors] = useState<Visitor[]>([
     {
       id: "1",
       name: "Anonymous Visitor",
@@ -655,146 +687,58 @@ const PortfolioDashboard: React.FC = () => {
     mostViewedProject: "Panflix",
   };
 
-  const [newSkill, setNewSkill] = useState<{
-    name: string;
-    proficiency: number;
-  }>({name: "", proficiency: 0});
-
-  const [newExperience, setNewExperience] = useState<Experience>({
-    id: "",
-    company: "",
-    position: "",
-    startDate: "",
-    responsibilities: [],
-  });
-
-  const [newProject, setNewProject] = useState<Project>({
-    id: "",
-    title: "",
-    description: "",
-    technologies: [],
-    githubLink: "",
-    liveLink: "",
-  });
-
-  const [newMessage, setNewMessage] = useState<string>(" ");
-
-  // Enhance message handling
+  // Message sending logic
   const handleSendMessage = (newMsg: Message, visitorId?: string) => {
     setMessages((prevMessages) => {
-      // Check if message already exists
       const isDuplicate = prevMessages.some(
         (msg) =>
           msg.content === newMsg.content && msg.timestamp === newMsg.timestamp
       );
 
-      if (!isDuplicate) {
-        return [...prevMessages, newMsg];
-      }
-      return prevMessages;
+      return isDuplicate ? prevMessages : [...prevMessages, newMsg];
     });
 
-    // Optional: Additional logic for tracking conversations
     if (visitorId) {
-      // You might want to update visitor interaction tracking
       console.log(`Message sent to visitor: ${visitorId}`);
     }
   };
 
+  const updateItem = <T extends {id: string}>(
+    items: T[],
+    newItem: T,
+    setItems: React.Dispatch<React.SetStateAction<T[]>>
+  ) => {
+    setItems((prevItems) => {
+      const existingIndex = prevItems.findIndex(
+        (item) => item.id === newItem.id
+      );
+      if (existingIndex > -1) {
+        const updatedItems = [...prevItems];
+        updatedItems[existingIndex] = newItem;
+        return updatedItems;
+      }
+      return [...prevItems, newItem];
+    });
+  };
+
   // Enhance save methods for different types
   const handleSaveProject = (project: Project) => {
-    setProjects((prevProjects) => {
-      // Update existing or add new project
-      const existingIndex = prevProjects.findIndex((p) => p.id === project.id);
-      if (existingIndex > -1) {
-        const updatedProjects = [...prevProjects];
-        updatedProjects[existingIndex] = project;
-        return updatedProjects;
-      }
-      return [...prevProjects, project];
-    });
+    updateItem(projects, project, setProjects);
     setSelectedUploadType(null);
+    setSelectedItem(null);
   };
 
   const handleSaveSkill = (skill: Skill) => {
-    setSkills((prevSkills) => {
-      const existingIndex = prevSkills.findIndex((s) => s.id === skill.id);
-      if (existingIndex > -1) {
-        const updatedSkills = [...prevSkills];
-        updatedSkills[existingIndex] = skill;
-        return updatedSkills;
-      }
-      return [...prevSkills, skill];
-    });
+    updateItem(skills, skill, setSkills);
     setSelectedUploadType(null);
+    setSelectedItem(null);
   };
 
   const handleSaveExperience = (experience: Experience) => {
-    setExperiences((prevExperiences) => {
-      const existingIndex = prevExperiences.findIndex(
-        (e) => e.id === experience.id
-      );
-      if (existingIndex > -1) {
-        const updatedExperiences = [...prevExperiences];
-        updatedExperiences[existingIndex] = experience;
-        return updatedExperiences;
-      }
-      return [...prevExperiences, experience];
-    });
+    updateItem(experiences, experience, setExperiences);
     setSelectedUploadType(null);
+    setSelectedItem(null);
   };
-
-  // const handleAddSkill = () => {
-  //   if (newSkill.name && newSkill.proficiency > 0) {
-  //     const skillToAdd: Skill = {
-  //       id: (skills.length + 1).toString(),
-  //       name: newSkill.name,
-  //       proficiency: newSkill.proficiency,
-  //     };
-  //     setSkills([...skills, skillToAdd]);
-  //     setNewSkill({name: "", proficiency: 0});
-  //   }
-  // };
-
-  // const handleAddExperience = () => {
-  //   if (
-  //     newExperience.company &&
-  //     newExperience.position &&
-  //     newExperience.startDate
-  //   ) {
-  //     const experienceToAdd: Experience = {
-  //       ...newExperience,
-  //       id: (experiences.length + 1).toString(),
-  //       responsibilities: newExperience.responsibilities,
-  //     };
-  //     setExperiences([...experiences, experienceToAdd]);
-  //     setNewExperience({
-  //       id: "",
-  //       company: "",
-  //       position: "",
-  //       startDate: "",
-  //       responsibilities: [],
-  //     });
-  //   }
-  // };
-
-  // const handleAddProject = () => {
-  //   if (newProject.title && newProject.description) {
-  //     const projectToAdd: Project = {
-  //       ...newProject,
-  //       id: (projects.length + 1).toString(),
-  //     };
-  //     setProjects([...projects, projectToAdd]);
-  //     setNewProject({
-  //       id: "",
-  //       title: "",
-  //       description: "",
-  //       technologies: [],
-  //       githubLink: "",
-  //       liveLink: "",
-  //     });
-  //   }
-  // };
 
   // Render different sections based on active tab
   const renderDashboard = () => (
