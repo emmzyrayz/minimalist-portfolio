@@ -90,6 +90,8 @@ const ChatInterface: React.FC<{
     };
   };
 
+  useEffect(() => {
+    
   const handleMouseMove = (e: MouseEvent) => {
     if (isDragging && chatRef.current) {
       setPosition({
@@ -103,7 +105,7 @@ const ChatInterface: React.FC<{
     setIsDragging(false);
   };
 
-  useEffect(() => {
+
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
@@ -112,7 +114,7 @@ const ChatInterface: React.FC<{
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [isDragging]);
 
   const sendMessage = () => {
     if (newMessage.trim() || attachments.length) {
@@ -322,17 +324,17 @@ const UploadModal: React.FC<{
   };
 
   // Type guard to narrow down the specific type
-  function isProject(item: BaseItem): item is Project {
-    return (item as Project).title !== undefined;
-  }
+  // function isProject(item: BaseItem): item is Project {
+  //   return (item as Project).title !== undefined;
+  // }
 
-  function isSkill(item: BaseItem): item is Skill {
-    return (item as Skill).name !== undefined;
-  }
+  // function isSkill(item: BaseItem): item is Skill {
+  //   return (item as Skill).name !== undefined;
+  // }
 
-  function isExperience(item: BaseItem): item is Experience {
-    return (item as Experience).company !== undefined;
-  }
+  // function isExperience(item: BaseItem): item is Experience {
+  //   return (item as Experience).company !== undefined;
+  // }
 
   const handleArrayChange = (
     field: "technologies" | "responsibilities",
@@ -807,7 +809,7 @@ const PortfolioDashboard: React.FC = () => {
               <ChatInterface
                 initialMessages={visitorMessages}
                 visitor={selectedVisitor}
-                onSendMessage={(newMsg, visitorId) => {
+                onSendMessage={(newMsg) => {
                   handleSendMessage(newMsg);
                   // Additional logic for tracking conversation with specific visitor
                 }}

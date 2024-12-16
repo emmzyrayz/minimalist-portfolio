@@ -61,7 +61,7 @@ export default function Auth() {
 
       // Redirect or show success message
       router.push("/");
-    } catch (err: any) {
+    } catch (err) {
       // Assuming the error might have a response property
       const errorMessage =
         (err as {response?: {data?: {message?: string}}})?.response?.data

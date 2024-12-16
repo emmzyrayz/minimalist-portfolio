@@ -48,7 +48,24 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   const isAdmin = user?.role === "admin" || user?.role === "superadmin";
 
   // Validate token
-  const validateToken = async (currentToken: string) => {
+  // const validateToken = async (currentToken: string) => {
+  //   try {
+  //     await axios.post(
+  //       "/api/validate-token",
+  //       {},
+  //       {
+  //         headers: {Authorization: `Bearer ${currentToken}`},
+  //       }
+  //     );
+  //   } catch (err) {
+  //     console.error("error:")
+  //     logout();
+  //   }
+  // };
+
+  // Load user from local storage on initial load
+  useEffect(() => {
+    const validateToken = async (currentToken: string) => {
     try {
       await axios.post(
         "/api/validate-token",
@@ -57,13 +74,13 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
           headers: {Authorization: `Bearer ${currentToken}`},
         }
       );
-    } catch (_) {
+    } catch (err) {
+      console.error("error:");
       logout();
     }
   };
 
-  // Load user from local storage on initial load
-  useEffect(() => {
+
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
 
@@ -75,12 +92,13 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
 
         // Optional: Validate token with backend
         validateToken(storedToken);
-      } catch (_) {
+      } catch (err) {
+        console.error("error:");
         // Clear invalid local storage
         logout();
       }
     }
-  }, [validateToken]);
+  }, []);
 
   // Login function
   const login = async (email: string, password: string) => {

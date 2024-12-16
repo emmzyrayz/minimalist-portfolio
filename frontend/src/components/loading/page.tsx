@@ -21,12 +21,12 @@ export const LoaderPage = () => {
     "Stay updated with the latest web development trends.",
   ];
 
-  const getRandomHint = () => {
-    const randomIndex = Math.floor(Math.random() * hints.length);
-    return hints[randomIndex];
-  };
+    useEffect(() => {
+      const getRandomHint = () => {
+        const randomIndex = Math.floor(Math.random() * hints.length);
+        return hints[randomIndex];
+      };
 
-  useEffect(() => {
     // Set a random hint after the component mounts
     setHint(getRandomHint());
 
@@ -54,7 +54,7 @@ export const LoaderPage = () => {
       clearInterval(interval);
       clearTimeout(timer);
     };
-  }, [getRandomHint]);
+  }, []);
 
   return (
     <>
