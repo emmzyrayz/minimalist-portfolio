@@ -1,16 +1,15 @@
 "use client";
 import {useEffect, useRef, useState} from "react";
-import { useScrollVisibility } from "@/context/scrollvisbility";
 import "./show.css";
 import {FaFacebook, FaReddit, FaTwitter, FaDiscord} from "react-icons/fa";
-import Image from "next/image";
+// import Image from "next/image";
 import ShowSVGComponent from "@/assets/icons/showicon";
-import showcon from "@/assets/icons/show-icon.svg";
+// import showcon from "@/assets/icons/show-icon.svg";
 import Link from "next/link";
 
 export const Show = () => {
   // const {isShowVisible, setShowVisibility} = useScrollVisibility();
-  const showRef = useRef<HTMLDivElement | null>(null);
+  // const showRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const skillRef = useRef<HTMLDivElement | null>(null);
 
@@ -58,13 +57,15 @@ useEffect(() => {
     {threshold: 0.1} // Trigger when 10% of the component is visible
   );
 
-  if (skillRef.current) {
-    observer.observe(skillRef.current);
+  const currentSkillRef = skillRef.current; 
+
+  if (currentSkillRef) {
+    observer.observe(currentSkillRef);
   }
 
   return () => {
-    if (skillRef.current) {
-      observer.unobserve(skillRef.current);
+    if (currentSkillRef) {
+      observer.unobserve(currentSkillRef);
     }
   };
 }, []);
@@ -83,7 +84,7 @@ useEffect(() => {
           }`}
         >
           <span className="text-[--black] text-[32px] md:text-[40px] lg:text-[68px]">
-            Hello i'am{" "}
+            Hello I&apos;m{" "}
             <b className="md:font-bold lg:font-extrabold">
               Nnamdi Dike. <br /> Frontend{" "}
               <span className="font-outline-2 text-[--white]">Developer</span>

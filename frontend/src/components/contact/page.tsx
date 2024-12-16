@@ -118,7 +118,7 @@ export const Contact = () => {
           <div className="text_head font-sora flex w-full items-center justify-center md:justify-start">
             <span className="text-[--black] md:text-[36px] text-[28px] lg:text-[60px]">
               <b className="md:font-bold lg:font-extrabold font-semibold">
-                Let's{" "}
+                Let&apos;s{" "}
                 <span className="font-outline-2 text-[--white]">talk</span> for{" "}
                 <br />
                 Something special

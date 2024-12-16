@@ -3,7 +3,7 @@ import React, {
   useState,
   useContext,
   useCallback,
-  useEffect,
+  // useEffect,
 } from "react";
 
 // Define the shape of the context

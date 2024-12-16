@@ -85,8 +85,8 @@ export default function RootLayout({
     `}
       >
         <head>
-          {/* <title>{metadata.title as string}</title>
-          <meta name="description" content={metadata.description as string} /> */}
+          <title>{metadata.title as string}</title>
+          <meta name="description" content={metadata.description as string} />
         </head>
         <body>
           <div>

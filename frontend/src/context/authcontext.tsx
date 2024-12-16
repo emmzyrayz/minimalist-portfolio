@@ -47,6 +47,21 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   const isAuthenticated = !!user;
   const isAdmin = user?.role === "admin" || user?.role === "superadmin";
 
+  // Validate token
+  const validateToken = async (currentToken: string) => {
+    try {
+      await axios.post(
+        "/api/validate-token",
+        {},
+        {
+          headers: {Authorization: `Bearer ${currentToken}`},
+        }
+      );
+    } catch (_) {
+      logout();
+    }
+  };
+
   // Load user from local storage on initial load
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -60,27 +75,12 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
 
         // Optional: Validate token with backend
         validateToken(storedToken);
-      } catch (error) {
+      } catch (_) {
         // Clear invalid local storage
         logout();
       }
     }
-  }, []);
-
-  // Validate token
-  const validateToken = async (currentToken: string) => {
-    try {
-      await axios.post(
-        "/api/validate-token",
-        {},
-        {
-          headers: {Authorization: `Bearer ${currentToken}`},
-        }
-      );
-    } catch (error) {
-      logout();
-    }
-  };
+  }, [validateToken]);
 
   // Login function
   const login = async (email: string, password: string) => {

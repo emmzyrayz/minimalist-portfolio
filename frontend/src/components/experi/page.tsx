@@ -46,7 +46,7 @@ type ExpTabProps = {
 };
 
 // SkillBlock component with explicit typing
-const ExpTab: React.FC<ExpTabProps> = ({icon: Icon, name, color, date}) => {
+const ExpTab: React.FC<ExpTabProps> = ({icon: Icon, name, date}) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (

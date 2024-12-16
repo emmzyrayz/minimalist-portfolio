@@ -54,26 +54,34 @@ export const LoaderPage = () => {
       clearInterval(interval);
       clearTimeout(timer);
     };
-  }, []);
+  }, [getRandomHint]);
 
   return (
-    <div className="loading w-[100vw] h-[100vh] relative flex items-center justify-center z-10 cursor-wait">
-      <div className="loading-line" style={{width: `${loadingWidth}%`}}></div>
-      <div className="pl">
-        <div className="pl__sphere"></div>
-        <span className="pl__sphere-shadow"></span>
-        <div className="pl__sphere"></div>
-        <span className="pl__sphere-shadow"></span>
-        <div className="pl__sphere"></div>
-        <span className="pl__sphere-shadow"></span>
-        <div className="pl__sphere"></div>
-        <span className="pl__sphere-shadow"></span>
-      </div>
-
-      <div className="hint absolute font-sora text-[--white] top-10 font-bold text-xl w-full items-center justify-center flex flex-col text-center">
-        <span className="text-xl font-extrabold mb-2">Hint:</span>
-        <p>{hint}</p>
-      </div>
-    </div>
+    <>
+      {loading ? (
+        <div className=" loading w-[100vw] h-[100vh] relative flex items-center justify-center z-10 cursor-wait">
+          <div
+            className="loading-line"
+            style={{width: `${loadingWidth}%`}}
+          ></div>
+          <div className="pl">
+            <div className="pl__sphere"></div>
+            <span className="pl__sphere-shadow"></span>
+            <div className="pl__sphere"></div>
+            <span className="pl__sphere-shadow"></span>
+            <div className="pl__sphere"></div>
+            <span className="pl__sphere-shadow"></span>
+            <div className="pl__sphere"></div>
+            <span className="pl__sphere-shadow"></span>
+          </div>
+          <div className="hint absolute font-sora text-[--white] top-10 font-bold text-xl w-full items-center justify-center flex flex-col text-center">
+            <span className="text-xl font-extrabold mb-2">Hint:</span>
+            <p>{hint}</p>
+          </div>
+        </div>
+      ) : (
+        <div>Your main content goes here.</div> // Replace with your actual content
+      )}
+    </>
   );
 };

@@ -52,13 +52,15 @@ const SkillBlock: React.FC<SkillBlockProps> = ({ icon: Icon, name, proficiency }
      {threshold: 0.1} // Trigger when 10% of the component is visible
    );
 
-   if (skillRef.current) {
-     observer.observe(skillRef.current);
+   const currentSkillRef = skillRef.current; // Store the current ref value
+
+   if (currentSkillRef) {
+     observer.observe(currentSkillRef);
    }
 
    return () => {
-     if (skillRef.current) {
-       observer.unobserve(skillRef.current);
+     if (currentSkillRef) {
+       observer.unobserve(currentSkillRef);
      }
    };
  }, []);
@@ -121,13 +123,15 @@ export const Skills: React.FC = () => {
      {threshold: 0.1} // Trigger when 10% of the component is visible
    );
 
-   if (skillRef.current) {
-     observer.observe(skillRef.current);
+   const currentSkillRef = skillRef.current; // Store the current ref value
+
+   if (currentSkillRef) {
+     observer.observe(currentSkillRef);
    }
 
    return () => {
-     if (skillRef.current) {
-       observer.unobserve(skillRef.current);
+     if (currentSkillRef) {
+       observer.unobserve(currentSkillRef);
      }
    };
  }, []);

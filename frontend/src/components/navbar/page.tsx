@@ -33,7 +33,7 @@ export const Navbar = () => {
       </Link>
 
       {/* Hamburger Menu */}
-      <HamburgerMenu isOpen={isOpen} toggleMenu={() => setIsOpen(!isOpen)} />
+      <HamburgerMenu isOpen={isOpen} toggleMenu={toggleMenu} />
 
       <div className="navbar_btn md:flex hidden flex-row md:p-1 lg:gap-7 md:gap-3 items-center justify-center font-sora lg:text-xl md:text-lg font-semibold ">
         <Link

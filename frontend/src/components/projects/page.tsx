@@ -38,6 +38,15 @@ export const projectsData: Project[] = [
     githubLink: "https://github.com/username/project2",
     liveLink: "https://project2-live.com",
   },
+  {
+    id: 3,
+    title: "Project Beta",
+    description: "An innovative solution that revolutionizes...",
+    technologies: ["Next.js", "GraphQL", "Prisma"],
+    image: img3,
+    githubLink: "https://github.com/username/project2",
+    liveLink: "https://project2-live.com",
+  },
   // Add more projects...
 ];
 
