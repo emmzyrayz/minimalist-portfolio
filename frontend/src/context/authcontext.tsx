@@ -66,20 +66,19 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   // Load user from local storage on initial load
   useEffect(() => {
     const validateToken = async (currentToken: string) => {
-    try {
-      await axios.post(
-        "/api/validate-token",
-        {},
-        {
-          headers: {Authorization: `Bearer ${currentToken}`},
-        }
-      );
-    } catch (err) {
-      console.error("error:");
-      logout();
-    }
-  };
-
+      try {
+        await axios.post(
+          "/api/validate-token",
+          {},
+          {
+            headers: {Authorization: `Bearer ${currentToken}`},
+          }
+        );
+      } catch (error) {
+        console.error("Token validation failed:", error);
+        logout();
+      }
+    };
 
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
@@ -92,8 +91,8 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
 
         // Optional: Validate token with backend
         validateToken(storedToken);
-      } catch (err) {
-        console.error("error:");
+      } catch (error) {
+        console.error("Error parsing stored user:", error);
         // Clear invalid local storage
         logout();
       }

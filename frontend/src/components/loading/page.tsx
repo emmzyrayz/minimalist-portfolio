@@ -54,7 +54,7 @@ export const LoaderPage = () => {
       clearInterval(interval);
       clearTimeout(timer);
     };
-  }, []);
+  }, [hints]);
 
   return (
     <>

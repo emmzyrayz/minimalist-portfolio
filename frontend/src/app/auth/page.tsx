@@ -70,6 +70,10 @@ export default function Auth() {
     }
   };
 
+  const handleSkipSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>, true);
+  };
+
   return (
     <div className="auth-section w-full h-[87vh] p-4 flex flex-row items-center justify-center gap-3">
       <div className="auth-con flex flex-col w-1/2 gap-2">
@@ -170,7 +174,7 @@ export default function Auth() {
 
               <button
                 type="button"
-                onClick={(e) => handleSubmit(e as any, true)}
+                onClick={handleSkipSubmit}
                 className="items-center justify-center p-2 flex rounded-md bg-[--white] text-[--black] md:font-bold font-semibold w-[120px] md:h-[40px] h-[30px] border-[2px] border-[--black] text-[14px] hover:border-[--black] hover:bg-[--black] hover:text-[--white] transition-all duration-300 ease-in-out"
               >
                 Continue
