@@ -16,7 +16,10 @@ export default function Auth() {
   const {subscribeUser} = useAuth();
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent, isSkip: boolean = false) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    isSkip: boolean = false
+  ) => {
     e.preventDefault();
     setError(null);
 
@@ -59,10 +62,13 @@ export default function Auth() {
       // Redirect or show success message
       router.push("/");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Subscription failed");
+      // Assuming the error might have a response property
+      const errorMessage =
+        (err as {response?: {data?: {message?: string}}})?.response?.data
+          ?.message || "Subscription failed";
+      setError(errorMessage);
     }
   };
-
 
   return (
     <div className="auth-section w-full h-[87vh] p-4 flex flex-row items-center justify-center gap-3">
