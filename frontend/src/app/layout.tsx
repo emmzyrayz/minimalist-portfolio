@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Footer } from "@/components/footer/page";
 import { Navbar } from "@/components/navbar/page";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { LoaderPage } from "@/components/loading/page";
 import { ScrollVisibilityProvider } from "@/context/scrollvisbility";
 
@@ -51,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   // Move contentRef inside the component
-  const contentRef = useRef<HTMLDivElement>(null);
+  // const contentRef = useRef<HTMLDivElement>(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -93,12 +93,12 @@ export default function RootLayout({
           <meta name="description" content={metadata.description as string} />
         </head>
         <body>
-          <div ref={contentRef}>
+          <div>
             {loading ? (
               <LoaderPage />
             ) : (
               <div>
-                <Navbar contentRef={contentRef} />
+                <Navbar />
                 {children}
                 <Footer />
               </div>

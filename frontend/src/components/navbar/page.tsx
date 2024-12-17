@@ -14,11 +14,9 @@ interface DropdownMenuProps {
   isOpen: boolean;
 }
 
-interface NavbarProps {
-  contentRef: React.RefObject<HTMLDivElement>; // Add contentRef prop
-}
 
-export const Navbar: React.FC<NavbarProps> = ({contentRef}) => {
+
+export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -68,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({contentRef}) => {
         </Link>
       </div>
 
-      <PDFDownloadButton contentRef={contentRef} />
+      <PDFDownloadButton />
 
       {/* Dropdown Menu */}
       <DropdownMenu isOpen={isOpen} />

@@ -47,8 +47,8 @@ const socialLinks = [
 ];
 
 export const Show = ({
-  name = "Nnamdi Dike",
-  title = "Frontend Developer",
+  name = "Emmanuel",
+  title = "Frontend",
   description = "a skilled web developer specializing in building dynamic, <br /> user-focused websites and applications with expertise in modern technologies <br /> like React, Next.js, and Tailwind CSS. Passionate about innovation and problem-solving, <br /> I strive to deliver efficient and scalable digital solutions.",
   socialPlatforms = socialLinks, // Default to an empty array if not provided
 }: ShowProps) => {

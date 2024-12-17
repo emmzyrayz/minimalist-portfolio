@@ -10,13 +10,10 @@ declare module "html2pdf.js" {
     html2canvas?: {
       scale?: number;
       useCORS?: boolean;
-      allowTaint?: boolean;
       logging?: boolean;
       scrollX?: number;
       scrollY?: number;
       backgroundColor?: string;
-      width?: number;
-      height?: number;
     };
     jsPDF?: {
       unit?: string;
@@ -25,13 +22,13 @@ declare module "html2pdf.js" {
     };
   }
 
-  export interface Html2PdfInstance {
-    from(element: HTMLElement | null): Html2PdfInstance;
-    set(options: Options): Html2PdfInstance;
-    save(): void;
-  }
-
-  function html2pdf(): Html2PdfInstance;
+  function html2pdf(): {
+    from(element: HTMLElement): {
+      set(options: Options): {
+        save(): Promise<void>;
+      };
+    };
+  };
 
   export default html2pdf;
 }

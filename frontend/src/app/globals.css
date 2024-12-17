@@ -44,3 +44,8 @@
   font-family: var(--font-sora);
 }
 
+@media print {
+  .navbar_resume{
+    display: none;
+  }
+}
