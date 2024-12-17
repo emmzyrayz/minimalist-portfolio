@@ -6,10 +6,52 @@ import {FaFacebook, FaReddit, FaTwitter, FaDiscord} from "react-icons/fa";
 import ShowSVGComponent from "@/assets/icons/showicon";
 // import showcon from "@/assets/icons/show-icon.svg";
 import Link from "next/link";
+import {IconType} from "react-icons";
 
-export const Show = () => {
-  // const {isShowVisible, setShowVisibility} = useScrollVisibility();
-  // const showRef = useRef<HTMLDivElement | null>(null);
+// Define the type for social platform props
+interface SocialPlatform {
+  name: string;
+  icon: IconType;
+  url: string;
+}
+
+// Update the component to accept props
+interface ShowProps {
+  name?: string;
+  title?: string;
+  description?: string;
+  socialPlatforms?: SocialPlatform[];
+}
+
+const socialLinks = [
+  {
+    name: "Facebook",
+    icon: FaFacebook,
+    url: "https://facebook.com/your-profile",
+  },
+  {
+    name: "Reddit",
+    icon: FaReddit,
+    url: "https://www.reddit.com/u/okeyinterrupt",
+  },
+  {
+    name: "Twitter",
+    icon: FaTwitter,
+    url: "https://www.x.com/okayinterrupt",
+  },
+  {
+    name: "Discord",
+    icon: FaDiscord,
+    url: "https://discord.com/users/your-id",
+  },
+];
+
+export const Show = ({
+  name = "Nnamdi Dike",
+  title = "Frontend Developer",
+  description = "a skilled web developer specializing in building dynamic, <br /> user-focused websites and applications with expertise in modern technologies <br /> like React, Next.js, and Tailwind CSS. Passionate about innovation and problem-solving, <br /> I strive to deliver efficient and scalable digital solutions.",
+  socialPlatforms = socialLinks, // Default to an empty array if not provided
+}: ShowProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const skillRef = useRef<HTMLDivElement | null>(null);
 
@@ -45,30 +87,30 @@ export const Show = () => {
   //   };
   // }, [setShowVisibility]); // Empty dependency array means this runs once on mount
 
-useEffect(() => {
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    },
-    {threshold: 0.1} // Trigger when 10% of the component is visible
-  );
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+      },
+      {threshold: 0.1} // Trigger when 10% of the component is visible
+    );
 
-  const currentSkillRef = skillRef.current; 
+    const currentSkillRef = skillRef.current;
 
-  if (currentSkillRef) {
-    observer.observe(currentSkillRef);
-  }
-
-  return () => {
     if (currentSkillRef) {
-      observer.unobserve(currentSkillRef);
+      observer.observe(currentSkillRef);
     }
-  };
-}, []);
+
+    return () => {
+      if (currentSkillRef) {
+        observer.unobserve(currentSkillRef);
+      }
+    };
+  }, []);
 
   return (
     <div
@@ -86,7 +128,7 @@ useEffect(() => {
           <span className="text-[--black] text-[32px] md:text-[40px] lg:text-[68px]">
             Hello I&apos;m{" "}
             <b className="md:font-bold lg:font-extrabold">
-              Nnamdi Dike. <br /> Frontend{" "}
+              {name}. <br /> {title}{" "}
               <span className="font-outline-2 text-[--white]">Developer</span>
             </b>{" "}
             <br /> Based in{" "}
@@ -98,50 +140,33 @@ useEffect(() => {
             isVisible ? "slide-in-left" : "slide-out-left"
           }`}
         >
-          <span>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum
-            adipisci ad sequi, <br /> quas exercitationem nam ullam deserunt a
-            excepturi veniam odio placeat saepe, <br /> doloribus tempora
-            obcaecati omnis? Officiis, odio cum.
-          </span>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: description,//.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+            }}
+          />
         </div>
         <div
           className={`social_icons flex flex-row items-center md:justify-start justify-center w-full h-full relative gap-4 lg:ml-20 ${
             isVisible ? "slide-in-left delay-5" : "slide-out-left"
           }`}
         >
-          <Link
-            href="#"
-            className={`flex lg:w-[68px] lg:h-[68px] md:w-[56px] md:h-[56px] w-[40px] h-[40px] items-center justify-center border-[2px] border-[--black] lg:text-[32px] md:text-[24px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--white] transition-all duration-300 ease-in-out ${
-              isVisible ? "slide-in-left delay-4" : "slide-out-left"
-            }`}
-          >
-            <FaFacebook />
-          </Link>
-          <Link
-            href="#"
-            className={`flex lg:w-[68px] lg:h-[68px] md:w-[56px] md:h-[56px] w-[40px] h-[40px] items-center justify-center border-[2px] border-[--black] lg:text-[32px] md:text-[24px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--white] transition-all duration-300 ease-in-out ${
-              isVisible ? "slide-in-left delay-3" : "slide-out-left"
-            }`}
-          >
-            <FaReddit />
-          </Link>
-          <Link
-            href="#"
-            className={`flex lg:w-[68px] lg:h-[68px] md:w-[56px] md:h-[56px] w-[40px] h-[40px] items-center justify-center border-[2px] border-[--black] lg:text-[32px] md:text-[24px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--white] transition-all duration-300 ease-in-out ${
-              isVisible ? "slide-in-left delay-2" : "slide-out-left"
-            }`}
-          >
-            <FaTwitter />
-          </Link>
-          <Link
-            href="#"
-            className={`flex lg:w-[68px] lg:h-[68px] md:w-[56px] md:h-[56px] w-[40px] h-[40px] items-center justify-center border-[2px] border-[--black] lg:text-[32px] md:text-[24px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--white] transition-all duration-300 ease-in-out ${
-              isVisible ? "slide-in-left delay-1" : "slide-out-left"
-            }`}
-          >
-            <FaDiscord />
-          </Link>
+          {socialPlatforms.map((platform, index) => (
+            <Link
+              key={platform.name}
+              href={platform.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex lg:w-[68px] lg:h-[68px] md:w-[56px] md:h-[56px] w-[40px] h-[40px] items-center justify-center border-[2px] border-[--black] lg:text-[32px] md:text-[24px] rounded-md hover:bg-[--black] hover:text-[--white] hover:border-[--white] transition-all duration-300 ease-in-out ${
+                isVisible
+                  ? `slide-in-left delay-${4 - index}`
+                  : "slide-out-left"
+              }`}
+              aria-label={`${platform.name} profile`}
+            >
+              <platform.icon />
+            </Link>
+          ))}
         </div>
       </div>
       <ShowSVGComponent

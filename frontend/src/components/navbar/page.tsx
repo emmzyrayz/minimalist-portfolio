@@ -1,8 +1,9 @@
 'use client'
 import Link from "next/link";
-import {LuDownload} from "react-icons/lu";
+// import {LuDownload} from "react-icons/lu";
 import "./navbar.css";
 import React, { useState } from "react";
+import { PDFDownloadButton } from "../resume";
 
 interface HamburgerMenuProps {
   isOpen: boolean;
@@ -13,15 +14,17 @@ interface DropdownMenuProps {
   isOpen: boolean;
 }
 
-export const Navbar = () => {
+interface NavbarProps {
+  contentRef: React.RefObject<HTMLDivElement>; // Add contentRef prop
+}
 
+export const Navbar: React.FC<NavbarProps> = ({contentRef}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
-  
   return (
     <div className="Navbar_section flex flex-row lg:p-5 p-2 px-[3%] h-full gap-3 w-full items-center justify-between z-50">
       <Link href="/" className="">
@@ -65,14 +68,7 @@ export const Navbar = () => {
         </Link>
       </div>
 
-      <div className="navbar_resume md:flex hidden flex-row gap-3 lg:p-3 md:p-2 items-center justify-center font-sora text-md font-semibold bg-[--black] text-[--white] rounded cursor-pointer hover:bg-[--white] hover:text-[--black] border-[1px] hover:border-[--black] transition-all duration-300 ease-in-out">
-        <div className="resume-btn flex flex-row gap-1 items-center justify-center">
-          <div className="text">Resume</div>
-          <div className="icon text-[16px]">
-            <LuDownload />
-          </div>
-        </div>
-      </div>
+      <PDFDownloadButton contentRef={contentRef} />
 
       {/* Dropdown Menu */}
       <DropdownMenu isOpen={isOpen} />

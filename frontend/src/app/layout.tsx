@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Footer } from "@/components/footer/page";
 import { Navbar } from "@/components/navbar/page";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { LoaderPage } from "@/components/loading/page";
 import { ScrollVisibilityProvider } from "@/context/scrollvisbility";
 
@@ -44,11 +44,15 @@ const sora = localFont({
 
 const metadata: Metadata = baseMetadata;
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Move contentRef inside the component
+  const contentRef = useRef<HTMLDivElement>(null);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -89,12 +93,12 @@ export default function RootLayout({
           <meta name="description" content={metadata.description as string} />
         </head>
         <body>
-          <div>
+          <div ref={contentRef}>
             {loading ? (
               <LoaderPage />
             ) : (
               <div>
-                <Navbar />
+                <Navbar contentRef={contentRef} />
                 {children}
                 <Footer />
               </div>
