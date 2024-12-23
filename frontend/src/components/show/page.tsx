@@ -1,7 +1,7 @@
 "use client";
 import {useEffect, useRef, useState} from "react";
 import "./show.css";
-import {FaFacebook, FaReddit, FaTwitter, FaDiscord} from "react-icons/fa";
+import {FaFacebook, FaReddit, FaTwitter, FaDiscord, FaLinkedin} from "react-icons/fa";
 // import Image from "next/image";
 import ShowSVGComponent from "@/assets/icons/showicon";
 // import showcon from "@/assets/icons/show-icon.svg";
@@ -19,6 +19,8 @@ interface SocialPlatform {
 interface ShowProps {
   name?: string;
   title?: string;
+  subtitle?: string;
+  location?: string;
   description?: string;
   socialPlatforms?: SocialPlatform[];
 }
@@ -27,7 +29,7 @@ const socialLinks = [
   {
     name: "Facebook",
     icon: FaFacebook,
-    url: "https://facebook.com/your-profile",
+    url: "https://www.facebook.com/Nnamdidike0029",
   },
   {
     name: "Reddit",
@@ -40,15 +42,17 @@ const socialLinks = [
     url: "https://www.x.com/okayinterrupt",
   },
   {
-    name: "Discord",
-    icon: FaDiscord,
-    url: "https://discord.com/users/your-id",
+    name: "LinkedIn",
+    icon: FaLinkedin,
+    url: "https://www.linkedin.com/in/nnamdi-dike-604522281",
   },
 ];
 
 export const Show = ({
   name = "Emmanuel",
   title = "Frontend",
+  subtitle= "Developer",
+  location= "Nigeria",
   description = "a skilled web developer specializing in building dynamic, <br /> user-focused websites and applications with expertise in modern technologies <br /> like React, Next.js, and Tailwind CSS. Passionate about innovation and problem-solving, <br /> I strive to deliver efficient and scalable digital solutions.",
   socialPlatforms = socialLinks, // Default to an empty array if not provided
 }: ShowProps) => {
@@ -129,10 +133,10 @@ export const Show = ({
             Hello I&apos;m{" "}
             <b className="md:font-bold lg:font-extrabold">
               {name}. <br /> {title}{" "}
-              <span className="font-outline-2 text-[--white]">Developer</span>
+              <span className="font-outline-2 text-[--white]">{subtitle}</span>
             </b>{" "}
             <br /> Based in{" "}
-            <b className="md:font-bold lg:font-extrabold">Nigeria</b>
+            <b className="md:font-bold lg:font-extrabold">{location}</b>
           </span>
         </div>
         <div
@@ -142,7 +146,7 @@ export const Show = ({
         >
           <span
             dangerouslySetInnerHTML={{
-              __html: description,//.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+              __html: description, //.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
             }}
           />
         </div>

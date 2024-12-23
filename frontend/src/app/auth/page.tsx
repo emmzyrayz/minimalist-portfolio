@@ -9,9 +9,10 @@ export default function Auth() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isNewsletterSubscribed, setIsNewsletterSubscribed] = useState(false);
+  const [isNewsletterSubscribed, setIsNewsletterSubscribed] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {subscribeUser} = useAuth();
   const router = useRouter();
@@ -22,24 +23,27 @@ export default function Auth() {
   ) => {
     e.preventDefault();
     setError(null);
+    setIsLoading(true);
 
     try {
-      // If skipping, just continue
       if (isSkip) {
+        // Handle visitor subscription
+        await subscribeUser({
+          name: "Visitor",
+          email: "",
+          role: "visitor",
+          newsletter: false,
+        });
         router.push("/");
         return;
       }
 
-      // Determine role based on admin checkbox
-      const role = isAdmin ? "admin" : "user";
-
-      // Validate email if not skipping
+      // Validate inputs
       if (!isSkip && (!email || !name)) {
         setError("Name and email are required");
         return;
       }
 
-      // If admin, password is required
       if (isAdmin && !password) {
         setError("Password is required for admin role");
         return;
@@ -50,23 +54,16 @@ export default function Auth() {
         name,
         email,
         password: isAdmin ? password : undefined,
-        role,
+        role: isAdmin ? "admin" : "user",
+        newsletter: isNewsletterSubscribed,
       });
 
-      // Optional: Subscribe to newsletter
-      if (isNewsletterSubscribed) {
-        // Implement newsletter subscription logic here
-        console.log("Subscribed to newsletter");
-      }
-
-      // Redirect or show success message
+      // Redirect on success
       router.push("/");
-    } catch (err) {
-      // Assuming the error might have a response property
-      const errorMessage =
-        (err as {response?: {data?: {message?: string}}})?.response?.data
-          ?.message || "Subscription failed";
-      setError(errorMessage);
+    } catch (err: any) {
+      setError(err.message || "An error occurred during registration");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,11 +77,11 @@ export default function Auth() {
         <div className="auth-head flex flex-col items-start justify-center gap-3">
           <span className="text-2xl font-bold">Welcome to my portfolio</span>
           <span className="text-lg font-semibold">
-            Optional Registration for Portfolio Messaging
+            Optional Registration to Unlock Portfolio's Inbuilt Features
           </span>
           <span className="text-sm font-medium">
             NOTE: Registration is optional. You can skip or provide details to
-            use the messaging platform.
+            unlock the inbuilt features.
           </span>
         </div>
         <div className="auth-body">
@@ -110,6 +107,7 @@ export default function Auth() {
                 onChange={(e) => setName(e.target.value)}
                 className="w-full p-2 border-none outline-none rounded-md"
                 required
+                disabled={isLoading}
               />
             </span>
             <span className="email flex relative  w-[80%]">
@@ -124,6 +122,7 @@ export default function Auth() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-2 border-none outline-none rounded-md"
                 required
+                disabled={isLoading}
               />
             </span>
             {isAdmin && (
@@ -138,6 +137,7 @@ export default function Auth() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full p-2 border-none outline-none rounded-md"
+                  disabled={isLoading}
                 />
               </span>
             )}
@@ -148,6 +148,7 @@ export default function Auth() {
                 id="admin-check"
                 checked={isAdmin}
                 onChange={() => setIsAdmin(!isAdmin)}
+                disabled={isLoading}
               />
               <label htmlFor="admin-check">Are you the admin?</label>
             </div>
@@ -160,6 +161,7 @@ export default function Auth() {
                 onChange={() =>
                   setIsNewsletterSubscribed(!isNewsletterSubscribed)
                 }
+                disabled={isLoading}
               />
               <label htmlFor="newsletter-check">Subscribe to Newsletter</label>
             </div>
@@ -167,14 +169,16 @@ export default function Auth() {
             <div className="form-btn flex flex-row w-full items-center md:justify-start justify-center gap-2">
               <button
                 type="submit"
+                disabled={isLoading}
                 className="items-center justify-center p-2 flex rounded-md bg-[--black] text-[--white] md:font-bold font-semibold w-[120px] md:h-[40px] h-[30px] border-[2px] border-[--black] text-[14px] hover:border-[--black] hover:bg-[--white] hover:text-[--black] transition-all duration-300 ease-in-out"
               >
-                Submit
+                {isLoading ? "Loading..." : "Submit"}
               </button>
 
               <button
                 type="button"
                 onClick={handleSkipSubmit}
+                disabled={isLoading}
                 className="items-center justify-center p-2 flex rounded-md bg-[--white] text-[--black] md:font-bold font-semibold w-[120px] md:h-[40px] h-[30px] border-[2px] border-[--black] text-[14px] hover:border-[--black] hover:bg-[--black] hover:text-[--white] transition-all duration-300 ease-in-out"
               >
                 Continue

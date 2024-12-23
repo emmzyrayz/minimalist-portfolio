@@ -1,129 +1,119 @@
+// @/context/authcontext.tsx
 import React, {createContext, useState, useContext, useEffect} from "react";
 import axios from "axios";
 
-// Define types for user and authentication state
 interface User {
-  id?: string;
-  name?: string;
-  email?: string;
-  role?: "user" | "admin" | "superadmin";
+  _id: string;
+  name: string;
+  email: string;
+  role: "visitor" | "user" | "admin";
+  newsletter?: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   subscribeUser: (userData: {
     name: string;
     email: string;
     password?: string;
-    role?: "user" | "admin";
+    role?: "visitor" | "user" | "admin";
     newsletter?: boolean;
   }) => Promise<void>;
   isAuthenticated: boolean;
   isAdmin: boolean;
 }
 
-// Create the context
 const AuthContext = createContext<AuthContextType>({
   user: null,
   token: null,
   login: async () => {},
   logout: () => {},
   subscribeUser: async () => {},
+  isLoading: false,
   isAuthenticated: false,
   isAdmin: false,
 });
 
-// Provider component
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true); 
 
-  // Computed values
   const isAuthenticated = !!user;
-  const isAdmin = user?.role === "admin" || user?.role === "superadmin";
+  const isAdmin = user?.role === "admin";
 
-  // Validate token
-  // const validateToken = async (currentToken: string) => {
-  //   try {
-  //     await axios.post(
-  //       "/api/validate-token",
-  //       {},
-  //       {
-  //         headers: {Authorization: `Bearer ${currentToken}`},
-  //       }
-  //     );
-  //   } catch (err) {
-  //     console.error("error:")
-  //     logout();
-  //   }
-  // };
-
-  // Load user from local storage on initial load
+  // Load user from local storage and validate token
   useEffect(() => {
-    const validateToken = async (currentToken: string) => {
-      try {
-        await axios.post(
-          "/api/validate-token",
-          {},
-          {
-            headers: {Authorization: `Bearer ${currentToken}`},
-          }
-        );
-      } catch (error) {
-        console.error("Token validation failed:", error);
-        logout();
-      }
-    };
-
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
 
-    if (storedUser && storedToken) {
+    if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
-        setToken(storedToken);
-
-        // Optional: Validate token with backend
-        validateToken(storedToken);
+        if (storedToken) {
+          setToken(storedToken);
+          validateToken(storedToken);
+        } else {
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error("Error parsing stored user:", error);
-        // Clear invalid local storage
         logout();
       }
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
-  // Login function
-  const login = async (email: string, password: string) => {
+  const validateToken = async (currentToken: string) => {
     try {
-      const response = await axios.post("/api/login", {email, password});
+      const response = await axios.post(
+        "/api/auth/validate-token",
+        {},
+        {
+          headers: {Authorization: `Bearer ${currentToken}`},
+        }
+      );
 
-      const {token, user: userData} = response.data;
-
-      setUser({
-        id: userData._id,
-        name: userData.name,
-        email: userData.email,
-        role: userData.role,
-      });
-      setToken(token);
-
-      // Store in local storage
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("token", token);
+      if (!response.data.valid) {
+        logout();
+      }
     } catch (error) {
-      console.error("Login failed", error);
-      throw error;
+      console.error("Token validation failed:", error);
+      logout();
+    } finally {
+      setIsLoading(false); // Set loading to false after validation
     }
   };
 
-  // Logout function
+  const login = async (email: string, password: string) => {
+    setIsLoading(true); // Set loading to true during login
+    try {
+      const response = await axios.post("/api/auth/login", {email, password});
+      const {token: newToken, user: userData} = response.data;
+
+      setUser(userData);
+      setToken(newToken);
+
+      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("token", newToken);
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      throw new Error(
+        error.response?.data?.error || "Login failed. Please try again."
+      );
+    } finally {
+      setIsLoading(false); // Set loading to false after login attempt
+    }
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -131,29 +121,42 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
     localStorage.removeItem("token");
   };
 
-  // Subscribe user function
   const subscribeUser = async (userData: {
     name: string;
     email: string;
     password?: string;
-    role?: "user" | "admin";
+    role?: "visitor" | "user" | "admin";
     newsletter?: boolean;
   }) => {
     try {
-      const response = await axios.post("/api/subscribe", {
-        ...userData,
-        newsletter: userData.newsletter || false,
-      });
+      const response = await axios.post("/api/auth/subscribe", userData);
 
-      // Optional: Auto-login for admin
-      if (userData.role === "admin" && userData.password) {
-        await login(userData.email, userData.password);
+      if (response.data.success) {
+        // Create a user object for visitor/user
+        const newUser = {
+          _id: response.data.userId,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role || "visitor",
+          newsletter: userData.newsletter,
+        };
+
+        // Set user in state and localStorage
+        setUser(newUser);
+        localStorage.setItem("user", JSON.stringify(newUser));
+
+        // If admin role and password provided, perform login
+        if (userData.role === "admin" && userData.password) {
+          await login(userData.email, userData.password);
+        }
       }
 
       return response.data;
-    } catch (error) {
-      console.error("Subscription failed", error);
-      throw error;
+    } catch (error: any) {
+      console.error("Subscription failed:", error);
+      throw new Error(
+        error.response?.data?.error || "Subscription failed. Please try again."
+      );
     }
   };
 
@@ -164,6 +167,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
         token,
         login,
         logout,
+        isLoading,
         subscribeUser,
         isAuthenticated,
         isAdmin,
@@ -174,5 +178,4 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   );
 };
 
-// Custom hook to use the auth context
 export const useAuth = () => useContext(AuthContext);

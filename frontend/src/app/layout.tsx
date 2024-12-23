@@ -7,9 +7,11 @@ import { Navbar } from "@/components/navbar/page";
 import { useState, useEffect } from "react";
 import { LoaderPage } from "@/components/loading/page";
 import { ScrollVisibilityProvider } from "@/context/scrollvisbility";
+import {usePathname, useRouter} from "next/navigation";
 
 // Import the metadata
 import { baseMetadata } from "@/utils/metadata"; // Adjust the import path as needed
+import { AuthProvider, useAuth } from "@/context/authcontext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -44,16 +46,38 @@ const sora = localFont({
 
 const metadata: Metadata = baseMetadata;
 
+// Wrapper component to handle auth checks
+function LayoutWrapper({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // List of public routes that don't require authentication
+  const publicRoutes = ['/auth', '/login', '/register'];
+
+  useEffect(() => {
+    if (!isLoading && !user && !publicRoutes.includes(pathname)) {
+      // Store the intended destination
+      sessionStorage.setItem("redirectAfterAuth", pathname);
+      router.push("/auth");
+    }
+  }, [user, isLoading, pathname, router]);
+
+  if (isLoading) {
+    return <LoaderPage />;
+  }
+
+  return children;
+}
+
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Move contentRef inside the component
-  // const contentRef = useRef<HTMLDivElement>(null);
-
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname(); // Get the current pathname
 
   useEffect(() => {
     // Simulate loading time
@@ -77,35 +101,48 @@ export default function RootLayout({
       window.removeEventListener("load", handleLoad);
     };
   }, []);
+
+  // Define the pages where you want to hide the Navbar and Footer
+  const hideNavbarFooterRoutes = [
+    "/login",
+    "/register",
+    "/interestform",
+    "/projectintro",
+  ]; // Add your routes here
+
   return (
-    <ScrollVisibilityProvider>
-      <html
-        lang="en"
-        className={`
+    <AuthProvider>
+      <ScrollVisibilityProvider>
+        <html
+          lang="en"
+          className={`
       ${geistSans.variable} 
       ${geistMono.variable} 
       ${sora.variable} 
       antialiased
     `}
-      >
-        <head>
-          <title>{metadata.title as string}</title>
-          <meta name="description" content={metadata.description as string} />
-        </head>
-        <body>
-          <div>
-            {loading ? (
-              <LoaderPage />
-            ) : (
-              <div>
-                <Navbar />
-                {children}
-                <Footer />
-              </div>
-            )}
-          </div>
-        </body>
-      </html>
-    </ScrollVisibilityProvider>
+        >
+          <head>
+            <title>{metadata.title as string}</title>
+            <meta name="description" content={metadata.description as string} />
+          </head>
+          <body>
+            <div>
+              {loading ? (
+                <LoaderPage />
+              ) : (
+                <div>
+                  <LayoutWrapper>
+                    {!hideNavbarFooterRoutes.includes(pathname) && <Navbar />}
+                    {children}
+                    {!hideNavbarFooterRoutes.includes(pathname) && <Footer />}
+                  </LayoutWrapper>
+                </div>
+              )}
+            </div>
+          </body>
+        </html>
+      </ScrollVisibilityProvider>
+    </AuthProvider>
   );
 }
