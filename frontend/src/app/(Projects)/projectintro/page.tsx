@@ -93,7 +93,7 @@ export default function ProjectInfo() {
               </span>
               <div className="w-full h-full flex items-center justify-center">
                 <Link
-                  href="/interestform"
+                  href="/projectform"
                   className="btn flex items-center justify-center w-[120px] h-[50px] rounded-lg border border-black bg-[black] text-[--white] hover:bg-[--white] hover:text-[--black] text-lg font-semibold"
                 >
                   <span>Join Us</span>
