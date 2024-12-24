@@ -86,10 +86,10 @@ export default function ProjectInfo() {
             <div className="title">Join Us</div>
             <div className="text flex flex-col gap-4">
               <span>
-                We're building the future of web development and we'd love your
-                help! Whether you're a designer, developer, or just passionate
-                about making the web better, there's a place for you in our
-                community.
+                We&lsquo;re building the future of web development and
+                we&lsquo;d love your help! Whether you&lsquo;re a designer,
+                developer, or just passionate about making the web better,
+                there&lsquo;s a place for you in our community.
               </span>
               <div className="w-full h-full flex items-center justify-center">
                 <Link

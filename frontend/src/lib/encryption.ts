@@ -3,7 +3,7 @@ import crypto from "crypto";
 
 const ENCRYPTION_KEY =
   process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "your-32-character-secret-key-here";
-const IV_LENGTH = 16;
+// const IV_LENGTH = 16;
 const IV = Buffer.from("1234567890123456"); 
 
 export function deterministicEncrypt(text: string): string {

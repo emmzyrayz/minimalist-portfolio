@@ -112,7 +112,7 @@ const DeveloperSignupForm = () => {
       } else {
         throw new Error("Registration failed");
       }
-    } catch (error) {
+    } catch {
       alert("An error occurred during registration. Please try again.");
     }
   };
@@ -287,10 +287,10 @@ const DeveloperSignupForm = () => {
                   name="contactPreference"
                   value="email"
                   checked={formData.contactPreference === "email"}
-                  onChange={(e) =>
+                  onChange={() =>
                     setFormData({
                       ...formData,
-                      contactPreference: "email" as "email" | "social",
+                      contactPreference: "email",
                     })
                   }
                   className="h-4 w-4 text-[--black] focus:ring-[--black] border-gray-300"
@@ -309,10 +309,10 @@ const DeveloperSignupForm = () => {
                   name="contactPreference"
                   value="social"
                   checked={formData.contactPreference === "social"}
-                  onChange={(e) =>
+                  onChange={() =>
                     setFormData({
                       ...formData,
-                      contactPreference: "social" as "email" | "social",
+                      contactPreference: "social",
                     })
                   }
                   className="h-4 w-4 text-[--black] focus:ring-[--black] border-gray-300"

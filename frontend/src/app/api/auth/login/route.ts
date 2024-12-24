@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import clientPromise from "@/lib/db";
-import {deterministicDecrypt, deterministicEncrypt, randomEncrypt} from "@/lib/encryption";
+import {deterministicDecrypt, deterministicEncrypt} from "@/lib/encryption";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import {headers} from "next/headers";

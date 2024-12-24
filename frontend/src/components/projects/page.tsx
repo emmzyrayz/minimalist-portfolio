@@ -1,6 +1,8 @@
 import "./project.css";
 import React, {useEffect, useState, useCallback, useMemo} from "react";
-import Image, { StaticImageData } from "next/image";
+import Image
+// { StaticImageData } 
+from "next/image";
 import {FaGithub, FaExternalLinkAlt} from "react-icons/fa";
 import {debounce} from "lodash";
 
@@ -315,76 +317,91 @@ export const Projects: React.FC = () => {
       const repos = await reposResponse.json();
 
       const projectsData = await Promise.all(
-        repos.map(async (repo: any) => {
-          try {
-            // Fetch languages with error handling
-            const languagesResponse = await fetch(repo.languages_url, {
-              headers,
-            });
-            const languages = await languagesResponse.json();
-
-            // Calculate language percentages
-            const totalBytes = Object.values(languages).reduce(
-              (a: number, b: any) => a + b,
-              0
-            );
-
-            const technologiesWithPercentages = Object.entries(languages).map(
-              ([name, bytes]) => ({
-                name,
-                percentage: ((bytes as number) / totalBytes) * 100,
-              })
-            );
-
-            // Use repo description as fallback if README fetch fails
-            let description = repo.description || "No description available";
-
+        repos.map(
+          async (repo: {
+            id: number;
+            name: string;
+            description: string;
+            languages_url: string;
+            homepage: string;
+            has_pages: boolean;
+            html_url: string;
+            full_name: string;
+            stargazers_count: number;
+            updated_at: string;
+            created_at: string;
+          }) => {
             try {
-              const readmeResponse = await fetch(
-                `https://api.github.com/repos/emmzyrayz/${repo.name}/readme`,
-                {headers}
+              // Fetch languages with error handling
+              const languagesResponse = await fetch(repo.languages_url, {
+                headers,
+              });
+              const languages: Record<string, number> =
+                await languagesResponse.json();
+
+              // Calculate language percentages
+              const totalBytes = Object.values(languages).reduce(
+                (a: number, b: number) => a + b,
+                0
               );
 
-              if (readmeResponse.ok) {
-                const readme = await readmeResponse.json();
-                const decodedContent = atob(readme.content);
-                const firstParagraph = decodedContent
-                  .split("\n\n")[0]
-                  .replace(/[#\n]/g, "")
-                  .trim();
-                if (firstParagraph) {
-                  description = firstParagraph;
+              const technologiesWithPercentages = Object.entries(languages).map(
+                ([name, bytes]) => ({
+                  name,
+                  percentage: ((bytes as number) / totalBytes) * 100,
+                })
+              );
+
+              // Use repo description as fallback if README fetch fails
+              let description = repo.description || "No description available";
+
+              try {
+                const readmeResponse = await fetch(
+                  `https://api.github.com/repos/emmzyrayz/${repo.name}/readme`,
+                  {headers}
+                );
+
+                if (readmeResponse.ok) {
+                  const readme = await readmeResponse.json();
+                  const decodedContent = atob(readme.content);
+                  const firstParagraph = decodedContent
+                    .split("\n\n")[0]
+                    .replace(/[#\n]/g, "")
+                    .trim();
+                  if (firstParagraph) {
+                    description = firstParagraph;
+                  }
                 }
+              } catch {
+                console.warn(`Could not fetch README for ${repo.name}`);
               }
+
+              const deploymentUrl =
+                repo.homepage ||
+                (repo.has_pages
+                  ? `https://emmzyrayz.github.io/${repo.name}`
+                  : undefined);
+
+              return {
+                id: repo.id,
+                title: repo.name,
+                description,
+                technologies: technologiesWithPercentages,
+                image: repo.homepage
+                  ? `https://opengraph.githubassets.com/1/${repo.full_name}`
+                  : `/api/placeholder/600/400`,
+                githubLink: repo.html_url,
+                liveLink: deploymentUrl,
+                stars: repo.stargazers_count,
+                updatedAt: repo.updated_at,
+                createdAt: repo.created_at,
+              };
             } catch (error) {
-              console.warn(`Could not fetch README for ${repo.name}`);
+              console.error(`Error processing repository ${repo.name}:`, error);
+              return null;
             }
-
-            const deploymentUrl =
-              repo.homepage ||
-              (repo.has_pages
-                ? `https://emmzyrayz.github.io/${repo.name}`
-                : undefined);
-
-            return {
-              id: repo.id,
-              title: repo.name,
-              description,
-              technologies: technologiesWithPercentages,
-              image: repo.homepage
-                ? `https://opengraph.githubassets.com/1/${repo.full_name}`
-                : `/api/placeholder/600/400`,
-              githubLink: repo.html_url,
-              liveLink: deploymentUrl,
-              stars: repo.stargazers_count,
-              updatedAt: repo.updated_at,
-              createdAt: repo.created_at,
-            };
-          } catch (error) {
-            console.error(`Error processing repository ${repo.name}:`, error);
-            return null;
           }
-        })
+        )
       );
 
       const validProjects = projectsData.filter(
@@ -397,9 +414,9 @@ export const Projects: React.FC = () => {
 
       setProjects(validProjects);
       setLoading(false);
-    } catch (err) {
+    } catch (error: unknown) {
       setError("Failed to fetch projects. Please try again later.");
-      // setLoading(false);
+      console.error("Error fetching projects:", error);
     } finally {
       setLoading(false);
     }

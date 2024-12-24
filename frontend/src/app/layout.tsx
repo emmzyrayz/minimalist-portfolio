@@ -52,10 +52,12 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // List of public routes that don't require authentication
-  const publicRoutes = ['/auth', '/login', '/register'];
+  
 
   useEffect(() => {
+    // List of public routes that don't require authentication
+    const publicRoutes = ["/auth", "/login", "/register"];
+    
     if (!isLoading && !user && !publicRoutes.includes(pathname)) {
       // Store the intended destination
       sessionStorage.setItem("redirectAfterAuth", pathname);

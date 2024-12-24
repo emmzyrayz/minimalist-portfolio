@@ -26,14 +26,14 @@ interface UserDocument extends Document {
   visits: Visit[];
 }
 
-type UpdateOperations = {
-  $set: Partial<Pick<UserDocument, "lastVisited">>;
-  $push: {
-    visits: {
-      $each: Visit[];
-    };
-  };
-};
+// type UpdateOperations = {
+//   $set: Partial<Pick<UserDocument, "lastVisited">>;
+//   $push: {
+//     visits: {
+//       $each: Visit[];
+//     };
+//   };
+// };
 
 export async function POST(request: Request) {
   try {
@@ -76,13 +76,13 @@ export async function POST(request: Request) {
 
         // Update existing visitor's last visit
         await users.updateOne({_id: existingVisitor._id}, {
-          $set: {lastVisited: new Date()} as any,
+          $set: { lastVisited: new Date() },
           $push: {
             visits: {
               $each: [newVisit],
             },
-          } as any,
-        } as UpdateFilter<UserDocument>);
+          },
+        } as unknown as UpdateFilter<UserDocument>);
 
         return NextResponse.json({
           success: true,

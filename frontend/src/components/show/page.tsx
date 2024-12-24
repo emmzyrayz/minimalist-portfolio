@@ -1,7 +1,7 @@
 "use client";
 import {useEffect, useRef, useState} from "react";
 import "./show.css";
-import {FaFacebook, FaReddit, FaTwitter, FaDiscord, FaLinkedin} from "react-icons/fa";
+import {FaFacebook, FaReddit, FaTwitter, FaLinkedin} from "react-icons/fa";
 // import Image from "next/image";
 import ShowSVGComponent from "@/assets/icons/showicon";
 // import showcon from "@/assets/icons/show-icon.svg";

@@ -3,8 +3,13 @@ import {NextResponse} from "next/server";
 import {headers} from "next/headers";
 import jwt from "jsonwebtoken";
 import clientPromise from "@/lib/db";
+import {ObjectId} from "mongodb";
 
-export async function POST(request: Request) {
+interface JwtPayload {
+  userId: string;
+}
+
+export async function POST() {
   try {
     const headersList = headers();
     const authorization = headersList.get("Authorization");
@@ -17,13 +22,13 @@ export async function POST(request: Request) {
     const secret = process.env.NEXT_PUBLIC_JWT_SECRET || "your-jwt-secret";
 
     try {
-      const decoded = jwt.verify(token, secret) as any;
+      const decoded = jwt.verify(token, secret) as JwtPayload;
 
       // Optional: Verify user still exists in database
       const client = await clientPromise;
       const db = client.db("portfolio");
       const user = await db.collection("users").findOne({
-        _id: decoded.userId,
+        _id: new ObjectId(decoded.userId),
       });
 
       if (!user) {
@@ -38,11 +43,11 @@ export async function POST(request: Request) {
           role: user.role,
         },
       });
-    } catch (error) {
+    } catch {
       return NextResponse.json({error: "Invalid token"}, {status: 401});
     }
-  } catch (error) {
-    console.error("Error validating token:", error);
+  } catch (err) {
+    console.error("Error validating token:", err);
     return NextResponse.json({error: "Internal server error"}, {status: 500});
   }
 }

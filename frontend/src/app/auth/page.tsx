@@ -60,8 +60,12 @@ export default function Auth() {
 
       // Redirect on success
       router.push("/");
-    } catch (err: any) {
-      setError(err.message || "An error occurred during registration");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An error occurred during registration");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -77,7 +81,7 @@ export default function Auth() {
         <div className="auth-head flex flex-col items-start justify-center gap-3">
           <span className="text-2xl font-bold">Welcome to my portfolio</span>
           <span className="text-lg font-semibold">
-            Optional Registration to Unlock Portfolio's Inbuilt Features
+            Optional Registration to Unlock Portfolio&lsquo;s Inbuilt Features
           </span>
           <span className="text-sm font-medium">
             NOTE: Registration is optional. You can skip or provide details to

@@ -1,6 +1,11 @@
 // @/context/authcontext.tsx
 import React, {createContext, useState, useContext, useEffect} from "react";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
+
+// Add interface for API error response
+interface ApiErrorResponse {
+  error: string;
+}
 
 interface User {
   _id: string;
@@ -48,10 +53,36 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
   const isAuthenticated = !!user;
   const isAdmin = user?.role === "admin";
 
+  const isAxiosError = (error: unknown): error is AxiosError => {
+    return error instanceof AxiosError;
+  };
+
+
   // Load user from local storage and validate token
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
+    const validateToken = async (currentToken: string) => {
+      try {
+        const response = await axios.post(
+          "/api/auth/validate-token",
+          {},
+          {
+            headers: {Authorization: `Bearer ${currentToken}`},
+          }
+        );
+
+        if (!response.data.valid) {
+          logout();
+        }
+      } catch (error) {
+        console.error("Token validation failed:", error);
+        logout();
+      } finally {
+        setIsLoading(false); // Set loading to false after validation
+      }
+    };
+
 
     if (storedUser) {
       try {
@@ -72,27 +103,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
     }
   }, []);
 
-  const validateToken = async (currentToken: string) => {
-    try {
-      const response = await axios.post(
-        "/api/auth/validate-token",
-        {},
-        {
-          headers: {Authorization: `Bearer ${currentToken}`},
-        }
-      );
-
-      if (!response.data.valid) {
-        logout();
-      }
-    } catch (error) {
-      console.error("Token validation failed:", error);
-      logout();
-    } finally {
-      setIsLoading(false); // Set loading to false after validation
-    }
-  };
-
+  
   const login = async (email: string, password: string) => {
     setIsLoading(true); // Set loading to true during login
     try {
@@ -104,11 +115,17 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
 
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("token", newToken);
-    } catch (error: any) {
-      console.error("Login failed:", error);
-      throw new Error(
-        error.response?.data?.error || "Login failed. Please try again."
-      );
+    } catch (error: unknown) {
+     if (isAxiosError(error)) {
+       console.error("Login failed:", error);
+       throw new Error(
+         (error.response?.data as ApiErrorResponse)?.error ||
+           "Login failed. Please try again."
+       );
+     } else {
+       console.error("Unexpected error:", error);
+       throw new Error("Login failed. Please try again.");
+     }
     } finally {
       setIsLoading(false); // Set loading to false after login attempt
     }
@@ -152,11 +169,15 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({
       }
 
       return response.data;
-    } catch (error: any) {
-      console.error("Subscription failed:", error);
-      throw new Error(
-        error.response?.data?.error || "Subscription failed. Please try again."
-      );
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        console.error("Subscription failed:", error);
+        throw new Error(
+          (error.response?.data as ApiErrorResponse)?.error ||
+            "Subscription failed. Please try again."
+        );
+      }
+      throw error;
     }
   };
 

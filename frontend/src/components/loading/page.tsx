@@ -8,20 +8,21 @@ export const LoaderPage = () => {
   const [loading, setLoading] = useState(true);
   const [hint, setHint] = useState("");
 
-  const hints = [
-    "Use semantic HTML for better accessibility.",
-    "CSS Grid is great for creating complex layouts.",
-    "Always optimize images for faster loading times.",
-    "Consider using a CSS preprocessor like SASS or LESS.",
-    "Keep your JavaScript modular for better maintainability.",
-    "Use version control systems like Git for your projects.",
-    "Test your website on multiple browsers for compatibility.",
-    "Utilize browser developer tools for debugging.",
-    "Learn about responsive design to improve user experience.",
-    "Stay updated with the latest web development trends.",
-  ];
 
     useEffect(() => {
+      const hints = [
+        "Use semantic HTML for better accessibility.",
+        "CSS Grid is great for creating complex layouts.",
+        "Always optimize images for faster loading times.",
+        "Consider using a CSS preprocessor like SASS or LESS.",
+        "Keep your JavaScript modular for better maintainability.",
+        "Use version control systems like Git for your projects.",
+        "Test your website on multiple browsers for compatibility.",
+        "Utilize browser developer tools for debugging.",
+        "Learn about responsive design to improve user experience.",
+        "Stay updated with the latest web development trends.",
+      ];
+      
       const getRandomHint = () => {
         const randomIndex = Math.floor(Math.random() * hints.length);
         return hints[randomIndex];
