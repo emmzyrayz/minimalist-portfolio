@@ -1,5 +1,8 @@
 import Link from "next/link";
 import './project.css';
+import { FoxPolySVG } from "@/assets/icons/foxpolysvg";
+import { FoxIconSVG } from "@/assets/icons/foxIcon";
+import { LogoIconSVG } from "@/assets/icons/logo";
 
 
 export default function ProjectInfo() {
@@ -8,12 +11,15 @@ export default function ProjectInfo() {
       <div className="w-full h-full flex flex-col items-center justify-center p-[3%]">
         <div className="heading text-3xl font-extrabold mb-4 p-4">
           <h3>
-            <span>DevParts:</span> The Future of Web/Mobile Development
+            <span>DevKitsune:</span> The Future of Web/Mobile Development
           </h3>
         </div>
         <div className="body flex flex-col items-start justify-center gap-3 w-full h-full">
           <div className="phase-1 flex flex-col items-center justify-center w-full gap-2">
-            <h2 className="title">What is DevParts?</h2>
+            <h2 className="title">What is DevKitsune?</h2>
+            <span className=" p-10 rounded-2xl">
+              <LogoIconSVG  />
+            </span>
             <div className="text">
               WebParts is a revolutionary platform that makes building websites
               easier and faster than ever before. Think of it as a massive
@@ -23,7 +29,7 @@ export default function ProjectInfo() {
             </div>
           </div>
           <div className="phase-2 flex flex-col items-center justify-center w-full gap-4">
-            <div className="title">Why DevParts?</div>
+            <div className="title">Why DevKitsune?</div>
             <div className="text">
               <ol className="flex flex-col relative gap-2">
                 <li className="flex flex-col">
