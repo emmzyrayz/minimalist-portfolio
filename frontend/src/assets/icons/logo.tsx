@@ -12,7 +12,6 @@ interface FoxSVGProps {
 export const LogoIconSVG: React.FC<FoxSVGProps> = ({
   width = "100%",
   height = "100%",
-  fillColor = "#ffffff",
   primaryColor = "#000000",
   viewBox = "0 0 370 84.02784620502293",
 }) => {

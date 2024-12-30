@@ -108,7 +108,7 @@ export default function RootLayout({
   const hideNavbarFooterRoutes = [
     "/login",
     "/register",
-    "/interestform",
+    "/projectform",
     "/projectintro",
   ]; // Add your routes here
 

@@ -1,7 +1,5 @@
 import Link from "next/link";
 import './project.css';
-import { FoxPolySVG } from "@/assets/icons/foxpolysvg";
-import { FoxIconSVG } from "@/assets/icons/foxIcon";
 import { LogoIconSVG } from "@/assets/icons/logo";
 
 
@@ -18,14 +16,14 @@ export default function ProjectInfo() {
           <div className="phase-1 flex flex-col items-center justify-center w-full gap-2">
             <h2 className="title">What is DevKitsune?</h2>
             <span className=" p-10 rounded-2xl">
-              <LogoIconSVG  />
+              <LogoIconSVG />
             </span>
             <div className="text">
-              WebParts is a revolutionary platform that makes building websites
-              easier and faster than ever before. Think of it as a massive
-              library of ready-to-use website/mobile application parts ranging
-              from beautiful buttons to complete shopping carts that you can mix
-              and match to create your perfect website.
+              DevKitsune is a revolutionary platform that makes building
+              websites easier and faster than ever before. Think of it as a
+              massive library of ready-to-use website/mobile application parts
+              ranging from beautiful buttons to complete shopping carts that you
+              can mix and match to create your perfect website.
             </div>
           </div>
           <div className="phase-2 flex flex-col items-center justify-center w-full gap-4">

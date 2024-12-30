@@ -13,7 +13,6 @@ export const FoxIconSVG: React.FC<FoxSVGProps> = ({
   width = "100%",
   height = "100%",
   fillColor = "#ffffff",
-  primaryColor = "#000",
   viewBox = "0 0 40 48.015912117155956",
 }) => {
   return (
