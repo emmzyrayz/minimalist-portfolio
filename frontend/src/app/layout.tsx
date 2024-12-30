@@ -56,7 +56,13 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // List of public routes that don't require authentication
-    const publicRoutes = ["/auth", "/login", "/register"];
+    const publicRoutes = [
+      "/auth",
+      "/login",
+      "/register",
+      "/projectform",
+      "/projectintro",
+    ];
     
     if (!isLoading && !user && !publicRoutes.includes(pathname)) {
       // Store the intended destination
