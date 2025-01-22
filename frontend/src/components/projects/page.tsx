@@ -4,7 +4,7 @@ import Image from // { StaticImageData }
 "next/image";
 import {FaGithub, FaExternalLinkAlt} from "react-icons/fa";
 import {debounce} from "lodash";
-import { getGitHubToken } from "@/utils/env";
+import env from "@/utils/env";
 
 // Types
 interface Language {
@@ -238,7 +238,7 @@ export const Projects: React.FC = () => {
 
     try {
       // Get GitHub token from environment variables
-      const GITHUB_TOKEN = getGitHubToken();
+      const GITHUB_TOKEN = env.getGitHubToken();
 
       if (!GITHUB_TOKEN) {
         throw new Error("GitHub token is not configured");
@@ -262,8 +262,8 @@ export const Projects: React.FC = () => {
       }
 
       // Add authorization if token is available
-      if (getGitHubToken()) {
-        headers.Authorization = `token ${getGitHubToken()}`;
+      if (GITHUB_TOKEN) {
+        headers.Authorization = `token ${GITHUB_TOKEN}`;
       }
 
       // Fetch repositories

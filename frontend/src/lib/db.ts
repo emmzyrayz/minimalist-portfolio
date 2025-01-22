@@ -1,18 +1,11 @@
 // src/lib/db.ts
 import {MongoClient} from "mongodb";
 
-// Helper function to get the MongoDB URI based on the environment
-const getMongoDBUri = () => {
-  if (process.env.NODE_ENV === "development") {
-    // Use NEXT_PUBLIC_MONGODB_URI for local development
-    return process.env.NEXT_PUBLIC_MONGODB_URI || null;
-  } else {
-    // Use MONGODB_URI for production (Vercel)
-    return process.env.MONGODB_URI || null;
-  }
-};
+import env from "@/utils/env";
 
-const uri = getMongoDBUri();
+
+
+const uri = env.getMongoDBUri();
 
 if (!uri) {
   throw new Error(

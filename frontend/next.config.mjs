@@ -11,6 +11,13 @@ const nextConfig = {
       },
     ],
   },
+  env: {
+    GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+    MONGODB_URI: process.env.MONGODB_URI,
+    APP_URL: process.env.APP_URL,
+    JWT_SECRET: process.env.JWT_SECRET,
+    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
+  },
 };
 
 export default nextConfig;

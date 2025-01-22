@@ -1,11 +1,11 @@
 // /lib/encryption.ts
-import { getEncryptionKey } from "@/utils/env";
+import env from "@/utils/env";
 import crypto from "crypto";
 
 
 
 
-const ENCRYPTION_KEY = getEncryptionKey();
+const ENCRYPTION_KEY = env.getEncryptionKey();
 
 // Ensure the encryption key is 64 characters (32 bytes when converted from hex)
 if (!ENCRYPTION_KEY || ENCRYPTION_KEY.length !== 64) {
