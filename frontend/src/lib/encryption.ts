@@ -15,10 +15,18 @@ const getEncryptionKey = () => {
 
 const ENCRYPTION_KEY = getEncryptionKey();
 
-// Ensure the encryption key is 32 bytes (required for AES-256)
-if (!ENCRYPTION_KEY || ENCRYPTION_KEY.length !== 32) {
+// Ensure the encryption key is 64 characters (32 bytes when converted from hex)
+if (!ENCRYPTION_KEY || ENCRYPTION_KEY.length !== 64) {
   throw new Error(
-    "Invalid encryption key. Please provide a 32-character key in your environment variables."
+    "Invalid encryption key. Please provide a 64-character hex key in your environment variables."
+  );
+}
+
+// Convert the hex key to a Buffer for use with crypto functions
+const KEY_BUFFER = Buffer.from(ENCRYPTION_KEY, 'hex');
+if (KEY_BUFFER.length !== 32) {
+  throw new Error(
+    "Invalid encryption key. The key must be a valid 64-character hex string that converts to 32 bytes."
   );
 }
 
@@ -34,11 +42,7 @@ export function deterministicEncrypt(text: string): string {
   if (!text) return "";
 
   try {
-    const cipher = crypto.createCipheriv(
-      "aes-256-cbc",
-      Buffer.from(ENCRYPTION_KEY, "hex"),
-      IV
-    );
+    const cipher = crypto.createCipheriv("aes-256-cbc", KEY_BUFFER, IV);
     let encrypted = cipher.update(text, "utf8", "hex");
     encrypted += cipher.final("hex");
     return encrypted;
@@ -57,11 +61,7 @@ export function deterministicDecrypt(text: string): string {
   if (!text) return "";
 
   try {
-    const decipher = crypto.createDecipheriv(
-      "aes-256-cbc",
-      Buffer.from(ENCRYPTION_KEY, "hex"),
-      IV
-    );
+    const decipher = crypto.createDecipheriv("aes-256-cbc", KEY_BUFFER, IV);
     let decrypted = decipher.update(text, "hex", "utf8");
     decrypted += decipher.final("utf8");
     return decrypted;
@@ -84,11 +84,7 @@ export function randomEncrypt(text: string): {
 
   try {
     const iv = crypto.randomBytes(16); // Generate a random IV
-    const cipher = crypto.createCipheriv(
-      "aes-256-cbc",
-      Buffer.from(ENCRYPTION_KEY, "hex"),
-      iv
-    );
+    const cipher = crypto.createCipheriv("aes-256-cbc", KEY_BUFFER, iv);
     let encrypted = cipher.update(text, "utf8", "hex");
     encrypted += cipher.final("hex");
     return {
@@ -113,7 +109,7 @@ export function randomDecrypt(iv: string, encryptedData: string): string {
   try {
     const decipher = crypto.createDecipheriv(
       "aes-256-cbc",
-      Buffer.from(ENCRYPTION_KEY, "hex"),
+      KEY_BUFFER,
       Buffer.from(iv, "hex")
     );
     let decrypted = decipher.update(encryptedData, "hex", "utf8");
