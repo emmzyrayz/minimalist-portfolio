@@ -9,6 +9,17 @@ interface JwtPayload {
   userId: string;
 }
 
+// Helper function to get the JWT secret based on the environment
+const getJwtSecret = () => {
+  if (process.env.NODE_ENV === "development") {
+    // Use NEXT_PUBLIC_JWT_SECRET for local development
+    return process.env.NEXT_PUBLIC_JWT_SECRET || "your-jwt-secret";
+  } else {
+    // Use JWT_SECRET for production (Vercel)
+    return process.env.JWT_SECRET || "your-jwt-secret";
+  }
+};
+
 export async function POST() {
   try {
     const headersList = headers();
@@ -19,7 +30,7 @@ export async function POST() {
     }
 
     const token = authorization.substring(7);
-    const secret = process.env.NEXT_PUBLIC_JWT_SECRET || "your-jwt-secret";
+    const secret = getJwtSecret();
 
     try {
       const decoded = jwt.verify(token, secret) as JwtPayload;

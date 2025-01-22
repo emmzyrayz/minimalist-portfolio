@@ -46,6 +46,17 @@ interface GitHubReadme {
   content: string;
 }
 
+// Helper function to get the JWT secret based on the environment
+const getGitToken = () => {
+  if (process.env.NODE_ENV === "development") {
+    // Use NEXT_PUBLIC_GITHUB_TOKEN for local development
+    return process.env.NEXT_PUBLIC_GITHUB_TOKEN || "your-jwt-secret";
+  } else {
+    // Use JWT_SECRET for production (Vercel)
+    return process.env.GITHUB_TOKEN || "your-jwt-secret";
+  }
+};
+
 // Filter and Sort Components
 const FilterSort: React.FC<{
   onFilterChange: (value: string) => void;
@@ -227,13 +238,15 @@ export const Projects: React.FC = () => {
     []
   );
 
+
+
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
       // Get GitHub token from environment variables
-      const GITHUB_TOKEN = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
+      const GITHUB_TOKEN = getGitToken();
 
       if (!GITHUB_TOKEN) {
         throw new Error("GitHub token is not configured");
@@ -257,8 +270,8 @@ export const Projects: React.FC = () => {
       }
 
       // Add authorization if token is available
-      if (process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
-        headers.Authorization = `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`;
+      if (getGitToken()) {
+        headers.Authorization = `token ${getGitToken()}`;
       }
 
       // Fetch repositories

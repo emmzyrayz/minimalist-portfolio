@@ -32,6 +32,17 @@ interface UserDocument {
   lastVisited?: Date;
 }
 
+// Helper function to get the JWT secret based on the environment
+const getJwtSecret = () => {
+  if (process.env.NODE_ENV === "development") {
+    // Use NEXT_PUBLIC_JWT_SECRET for local development
+    return process.env.NEXT_PUBLIC_JWT_SECRET || "your-jwt-secret";
+  } else {
+    // Use JWT_SECRET for production (Vercel)
+    return process.env.JWT_SECRET || "your-jwt-secret";
+  }
+};
+
 export async function POST(request: Request) {
   try {
     const {email, password} = await request.json();
@@ -52,7 +63,6 @@ export async function POST(request: Request) {
     const user = await users.findOne({encryptedEmail});
 
     // If user is not found, check if it's a visitor
-    // If user is not found, check if it's a visitor
     if (!user) {
       // If the user is not found, check if the IP exists for a visitor
       const headersList = headers();
@@ -72,7 +82,7 @@ export async function POST(request: Request) {
             role: visitor.role,
             email: email, // Email is not stored for visitors
           },
-          process.env.NEXT_PUBLIC_JWT_SECRET || "your-jwt-secret",
+          getJwtSecret(),
           {expiresIn: "24h"}
         );
 
@@ -127,7 +137,7 @@ export async function POST(request: Request) {
             role: "visitor",
             email: email,
           },
-          process.env.NEXT_PUBLIC_JWT_SECRET || "your-jwt-secret",
+          getJwtSecret(),
           {expiresIn: "24h"}
         );
 
@@ -165,7 +175,7 @@ export async function POST(request: Request) {
         role: user.role,
         email: email,
       },
-      process.env.NEXT_PUBLIC_JWT_SECRET || "your-jwt-secret",
+      getJwtSecret(),
       {expiresIn: "24h"}
     );
 
