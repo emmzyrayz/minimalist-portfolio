@@ -29,39 +29,6 @@ interface ProjectCardProps extends Project {
   isEvenIndex: boolean;
 }
 
-// // Cache management
-// const CACHE_KEY = 'github-projects-cache';
-// const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
-
-// interface CacheData {
-//   timestamp: number;
-//   projects: Project[];
-// }
-
-
-
-// // Utility functions
-// const getCache = (): CacheData | null => {
-//   const cached = localStorage.getItem(CACHE_KEY);
-//   if (!cached) return null;
-  
-//   const data: CacheData = JSON.parse(cached);
-//   if (Date.now() - data.timestamp > CACHE_DURATION) {
-//     localStorage.removeItem(CACHE_KEY);
-//     return null;
-//   }
-  
-//   return data;
-// };
-
-// const setCache = (projects: Project[]) => {
-//   const cacheData: CacheData = {
-//     timestamp: Date.now(),
-//     projects,
-//   };
-//   localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-// };
-
 // Filter and Sort Components
 const FilterSort: React.FC<{
   onFilterChange: (value: string) => void;
@@ -123,9 +90,6 @@ const FilterSort: React.FC<{
 //   // Add more projects...
 // ];
 
-interface ProjectCardProps extends Project {
-  isEvenIndex: boolean;
-}
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
   title,
@@ -256,24 +220,6 @@ export const Projects: React.FC = () => {
 
 
     try {
-      // // Check cache first if not skipping
-      // if (!skipCache) {
-      //   const cached = getCache();
-      //   if (cached) {
-      //     setProjects(cached.projects);
-      //     setLoading(false);
-      //     return;
-      //   }
-      // }
-
-      // Utility to check environment variables
-      // const getEnvVar = (name: string): string => {
-      //   const value = process.env[name];
-      //   if (!value) {
-      //     throw new Error(`Missing environment variable: ${name}`);
-      //   }
-      //   return value;
-      // };
 
       // Get GitHub token from environment variables
       const GITHUB_TOKEN = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
@@ -290,13 +236,13 @@ export const Projects: React.FC = () => {
       // First, test the API connection
       const testResponse = await fetch("https://api.github.com/rate_limit", {
         headers,
+        cache: "no-store",
       });
 
       if (!testResponse.ok) {
-        if (testResponse.status === 403) {
-          throw new Error("Rate limit exceeded. Please try again later.");
-        }
-        throw new Error(`GitHub API error: ${testResponse.statusText}`);
+        throw new Error(
+          `GitHub API connection test failed: ${testResponse.status} ${testResponse.statusText}`
+        );
       }
 
       // Add authorization if token is available
@@ -307,48 +253,44 @@ export const Projects: React.FC = () => {
       // Fetch repositories
       const reposResponse = await fetch(
         "https://api.github.com/users/emmzyrayz/repos?per_page=100&sort=updated",
-        {headers}
+        {headers, cache: "no-store"}
       );
 
       if (!reposResponse.ok) {
-        throw new Error(`GitHub API error: ${reposResponse.statusText}`);
+        throw new Error(
+          `GitHub API error: ${reposResponse.status} ${reposResponse.statusText}`
+        );
       }
 
       const repos = await reposResponse.json();
 
       const projectsData = await Promise.all(
         repos.map(
-          async (repo: {
-            id: number;
-            name: string;
-            description: string;
-            languages_url: string;
-            homepage: string;
-            has_pages: boolean;
-            html_url: string;
-            full_name: string;
-            stargazers_count: number;
-            updated_at: string;
-            created_at: string;
-          }) => {
+          async (repo: any) => {
             try {
               // Fetch languages with error handling
               const languagesResponse = await fetch(repo.languages_url, {
                 headers,
+                cache: 'no-store'
               });
+
+              if (!languagesResponse.ok) {
+              throw new Error(`Failed to fetch languages: ${languagesResponse.status}`);
+            }
+
               const languages: Record<string, number> =
                 await languagesResponse.json();
 
               // Calculate language percentages
               const totalBytes = Object.values(languages).reduce(
-                (a: number, b: number) => a + b,
+                (a, b) => a + b,
                 0
               );
 
               const technologiesWithPercentages = Object.entries(languages).map(
                 ([name, bytes]) => ({
                   name,
-                  percentage: ((bytes as number) / totalBytes) * 100,
+                  percentage: (bytes / totalBytes) * 100,
                 })
               );
 
@@ -358,7 +300,7 @@ export const Projects: React.FC = () => {
               try {
                 const readmeResponse = await fetch(
                   `https://api.github.com/repos/emmzyrayz/${repo.name}/readme`,
-                  {headers}
+                  {headers, cache: 'no-store'}
                 );
 
                 if (readmeResponse.ok) {
