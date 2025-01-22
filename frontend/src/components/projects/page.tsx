@@ -1,8 +1,7 @@
 import "./project.css";
 import React, {useEffect, useState, useCallback, useMemo} from "react";
-import Image
-// { StaticImageData } 
-from "next/image";
+import Image from // { StaticImageData }
+"next/image";
 import {FaGithub, FaExternalLinkAlt} from "react-icons/fa";
 import {debounce} from "lodash";
 
@@ -29,12 +28,30 @@ interface ProjectCardProps extends Project {
   isEvenIndex: boolean;
 }
 
+interface GitHubRepo {
+  id: number;
+  name: string;
+  full_name: string;
+  description: string | null;
+  homepage: string | null;
+  html_url: string;
+  languages_url: string;
+  has_pages: boolean;
+  stargazers_count: number;
+  updated_at: string;
+  created_at: string;
+}
+
+interface GitHubReadme {
+  content: string;
+}
+
 // Filter and Sort Components
 const FilterSort: React.FC<{
   onFilterChange: (value: string) => void;
   onSortChange: (value: string) => void;
   sortOption: string;
-}> = ({ onFilterChange, onSortChange, sortOption }) => {
+}> = ({onFilterChange, onSortChange, sortOption}) => {
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-8 justify-between items-center">
       <input
@@ -90,7 +107,6 @@ const FilterSort: React.FC<{
 //   // Add more projects...
 // ];
 
-
 const ProjectCard: React.FC<ProjectCardProps> = ({
   title,
   description,
@@ -106,7 +122,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const fallbackImage = `/api/placeholder/600/400?text=${encodeURIComponent(
     title
   )}`;
-  
 
   return (
     <div
@@ -202,8 +217,6 @@ export const Projects: React.FC = () => {
   const [sortOption, setSortOption] = useState("updated");
   // const [retryCount, setRetryCount] = useState(0);
 
-  
-
   // // Use in your code
   // const GITHUB_TOKEN = getEnvVar("NEXT_PUBLIC_GITHUB_TOKEN");
   // const APP_URL = getEnvVar("NEXT_PUBLIC_APP_URL");
@@ -214,13 +227,11 @@ export const Projects: React.FC = () => {
     []
   );
 
-  const fetchProjects = useCallback( async () => {
+  const fetchProjects = useCallback(async () => {
     setLoading(true);
     setError(null);
 
-
     try {
-
       // Get GitHub token from environment variables
       const GITHUB_TOKEN = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
 
@@ -262,21 +273,25 @@ export const Projects: React.FC = () => {
         );
       }
 
-      const repos = await reposResponse.json();
+      const repos: GitHubRepo[] = await reposResponse.json();
 
       const projectsData = await Promise.all(
-        repos.map(
-          async (repo: any) => {
+        // First filter: Only process repos that have a homepage
+        repos
+          .filter((repo) => repo.homepage !== null && repo.homepage !== "")
+          .map(async (repo: GitHubRepo) => {
             try {
               // Fetch languages with error handling
               const languagesResponse = await fetch(repo.languages_url, {
                 headers,
-                cache: 'no-store'
+                cache: "no-store",
               });
 
               if (!languagesResponse.ok) {
-              throw new Error(`Failed to fetch languages: ${languagesResponse.status}`);
-            }
+                throw new Error(
+                  `Failed to fetch languages: ${languagesResponse.status}`
+                );
+              }
 
               const languages: Record<string, number> =
                 await languagesResponse.json();
@@ -300,11 +315,11 @@ export const Projects: React.FC = () => {
               try {
                 const readmeResponse = await fetch(
                   `https://api.github.com/repos/emmzyrayz/${repo.name}/readme`,
-                  {headers, cache: 'no-store'}
+                  {headers, cache: "no-store"}
                 );
 
                 if (readmeResponse.ok) {
-                  const readme = await readmeResponse.json();
+                  const readme: GitHubReadme = await readmeResponse.json();
                   const decodedContent = atob(readme.content);
                   const firstParagraph = decodedContent
                     .split("\n\n")[0]
@@ -318,44 +333,53 @@ export const Projects: React.FC = () => {
                 console.warn(`Could not fetch README for ${repo.name}`);
               }
 
+              // Create the project object with explicit type
+              const project: Project = {
+                id: repo.id,
+                title: repo.name,
+                description,
+                technologies: technologiesWithPercentages,
+                image: `https://opengraph.githubassets.com/1/${repo.full_name}`,
+                githubLink: repo.html_url,
+                stars: repo.stargazers_count,
+                updatedAt: repo.updated_at,
+                createdAt: repo.created_at,
+              };
+
+              // Add liveLink since we know homepage exists (due to filter above)
+              project.liveLink = repo.homepage!; // '!' is safe here due to filter
+
+              // Add liveLink only if it exists
               const deploymentUrl =
                 repo.homepage ||
                 (repo.has_pages
                   ? `https://emmzyrayz.github.io/${repo.name}`
                   : undefined);
 
-              return {
-                id: repo.id,
-                title: repo.name,
-                description,
-                technologies: technologiesWithPercentages,
-                image: repo.homepage
-                  ? `https://opengraph.githubassets.com/1/${repo.full_name}`
-                  : `/api/placeholder/600/400`,
-                githubLink: repo.html_url,
-                liveLink: deploymentUrl,
-                stars: repo.stargazers_count,
-                updatedAt: repo.updated_at,
-                createdAt: repo.created_at,
-              };
+              if (deploymentUrl) {
+                project.liveLink = deploymentUrl;
+              }
+
+              return project;
             } catch (error) {
               console.error(`Error processing repository ${repo.name}:`, error);
               return null;
             }
-          }
-        )
+          })
       );
 
-      const validProjects = projectsData.filter(
-        (project): project is Project => project !== null
-      );
+      // Type guard function
+      const isProject = (project: Project | null): project is Project => {
+        return project !== null;
+      };
+
+      const validProjects = projectsData.filter(isProject);
 
       if (validProjects.length === 0) {
         throw new Error("No valid projects found");
       }
 
       setProjects(validProjects);
-      setLoading(false);
     } catch (error: unknown) {
       setError("Failed to fetch projects. Please try again later.");
       console.error("Error fetching projects:", error);
@@ -409,16 +433,24 @@ export const Projects: React.FC = () => {
     );
   }
 
+  // Modified error display for better user feedback
   if (error) {
     return (
       <div className="text-center py-12">
         <p className="text-red-500 mb-4">{error}</p>
-        <button
-          onClick={fetchProjects}
-          className="px-4 py-2 bg-[--black] text-white rounded-lg hover:bg-[--gray-3] hover:text-black border border-white hover:border-black hover:border-2 transition-colors"
-        >
-          Retry
-        </button>
+        {error.includes("No projects with deployments found") ? (
+          <p className="text-gray-600">
+            Projects will be visible here once deployment URLs are added to the
+            repositories.
+          </p>
+        ) : (
+          <button
+            onClick={fetchProjects}
+            className="px-4 py-2 bg-[--black] text-white rounded-lg hover:bg-[--gray-3] hover:text-black border border-white hover:border-black hover:border-2 transition-colors"
+          >
+            Retry
+          </button>
+        )}
       </div>
     );
   }

@@ -2,9 +2,7 @@
 import {useEffect, useRef, useState} from "react";
 import "./show.css";
 import {FaFacebook, FaReddit, FaTwitter, FaLinkedin} from "react-icons/fa";
-// import Image from "next/image";
 import ShowSVGComponent from "@/assets/icons/showicon";
-// import showcon from "@/assets/icons/show-icon.svg";
 import Link from "next/link";
 import {IconType} from "react-icons";
 
@@ -59,38 +57,7 @@ export const Show = ({
   const [isVisible, setIsVisible] = useState(false);
   const skillRef = useRef<HTMLDivElement | null>(null);
 
-  // useEffect(() => {
-  //   const observer = new IntersectionObserver(
-  //     (entries) => {
-  //       entries.forEach((entry) => {
-  //         // Trigger visibility when at least 10% of the component is in view
-  //         if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
-  //           setShowVisibility(true);
-  //         }
-  //         // Hide when less than 30% is in view
-  //         else if (!entry.isIntersecting || entry.intersectionRatio <= 0.3) {
-  //           setShowVisibility(false);
-  //         }
-  //       });
-  //     },
-  //     {
-  //       threshold: [0.1, 0.3], // Trigger at 10% and 30% intersection
-  //     }
-  //   );
-
-  //   // Start observing the component
-  //   if (showRef.current) {
-  //     observer.observe(showRef.current);
-  //   }
-
-  //   // Cleanup
-  //   return () => {
-  //     if (showRef.current) {
-  //       observer.unobserve(showRef.current);
-  //     }
-  //   };
-  // }, [setShowVisibility]); // Empty dependency array means this runs once on mount
-
+  
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
