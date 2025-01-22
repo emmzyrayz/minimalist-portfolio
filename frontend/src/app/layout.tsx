@@ -12,6 +12,7 @@ import {usePathname, useRouter} from "next/navigation";
 // Import the metadata
 import { baseMetadata } from "@/utils/metadata"; // Adjust the import path as needed
 import { AuthProvider, useAuth } from "@/context/authcontext";
+import { validateEnvVars } from "@/utils/env";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -109,6 +110,12 @@ export default function RootLayout({
       window.removeEventListener("load", handleLoad);
     };
   }, []);
+
+  const missingVars = validateEnvVars();
+  if (missingVars.length > 0) {
+    console.error("Missing required environment variables:", missingVars);
+    // Handle missing variables as needed
+  }
 
   // Define the pages where you want to hide the Navbar and Footer
   const hideNavbarFooterRoutes = [

@@ -1,17 +1,9 @@
 // /lib/encryption.ts
+import { getEncryptionKey } from "@/utils/env";
 import crypto from "crypto";
 
 
-// Helper function to get the encryption key based on the environment
-const getEncryptionKey = () => {
-  if (process.env.NODE_ENV === "development") {
-    // Use NEXT_PUBLIC_ENCRYPTION_KEY for local development
-    return process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "your-32-character-secret-key-here";
-  } else {
-    // Use ENCRYPTION_KEY for production (Vercel)
-    return process.env.ENCRYPTION_KEY || "your-32-character-secret-key-here";
-  }
-};
+
 
 const ENCRYPTION_KEY = getEncryptionKey();
 

@@ -4,6 +4,7 @@ import Image from // { StaticImageData }
 "next/image";
 import {FaGithub, FaExternalLinkAlt} from "react-icons/fa";
 import {debounce} from "lodash";
+import { getGitHubToken } from "@/utils/env";
 
 // Types
 interface Language {
@@ -46,16 +47,7 @@ interface GitHubReadme {
   content: string;
 }
 
-// Helper function to get the JWT secret based on the environment
-const getGitToken = () => {
-  if (process.env.NODE_ENV === "development") {
-    // Use NEXT_PUBLIC_GITHUB_TOKEN for local development
-    return process.env.NEXT_PUBLIC_GITHUB_TOKEN || "your-jwt-secret";
-  } else {
-    // Use JWT_SECRET for production (Vercel)
-    return process.env.GITHUB_TOKEN || "your-jwt-secret";
-  }
-};
+
 
 // Filter and Sort Components
 const FilterSort: React.FC<{
@@ -246,7 +238,7 @@ export const Projects: React.FC = () => {
 
     try {
       // Get GitHub token from environment variables
-      const GITHUB_TOKEN = getGitToken();
+      const GITHUB_TOKEN = getGitHubToken();
 
       if (!GITHUB_TOKEN) {
         throw new Error("GitHub token is not configured");
@@ -270,8 +262,8 @@ export const Projects: React.FC = () => {
       }
 
       // Add authorization if token is available
-      if (getGitToken()) {
-        headers.Authorization = `token ${getGitToken()}`;
+      if (getGitHubToken()) {
+        headers.Authorization = `token ${getGitHubToken()}`;
       }
 
       // Fetch repositories
