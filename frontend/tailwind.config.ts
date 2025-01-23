@@ -24,6 +24,13 @@ const config: Config = {
         md: "3px 0px 2px rgba(0,0,0,0.2)",
         lg: "7px 0px 5px rgba(0,0,0,0.4)",
       },
+      screens: {
+        sm: "320px", // Mobile S
+        md: "375px", // Mobile M
+        lg: "425px", // Mobile L
+        xl: "768px", // Tablet
+        "2xl": "1024px", // Laptop
+      },
     },
   },
   plugins: [
