@@ -43,3 +43,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 frontend/.env
+# .gitignore
+.env
+*.env
+.env.local
+.env.development
+.env.production
