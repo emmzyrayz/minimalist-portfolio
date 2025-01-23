@@ -230,164 +230,22 @@ export const Projects: React.FC = () => {
     []
   );
 
-
-
+  // In your Projects component, replace the fetchProjects function with:
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // Get GitHub token from environment variables
-      const GITHUB_TOKEN = env.getGitHubToken();
-
-      if (!GITHUB_TOKEN) {
-        throw new Error("GitHub token is not configured");
+      const response = await fetch("/api/project");
+      if (!response.ok) {
+        throw new Error("Failed to fetch projects");
       }
 
-      const headers = {
-        Accept: "application/vnd.github.v3+json",
-        Authorization: `token ${GITHUB_TOKEN}`,
-      };
-
-      // First, test the API connection
-      const testResponse = await fetch("https://api.github.com/rate_limit", {
-        headers,
-        cache: "no-store",
-      });
-
-      if (!testResponse.ok) {
-        throw new Error(
-          `GitHub API connection test failed: ${testResponse.status} ${testResponse.statusText}`
-        );
-      }
-
-      // Add authorization if token is available
-      if (GITHUB_TOKEN) {
-        headers.Authorization = `token ${GITHUB_TOKEN}`;
-      }
-
-      // Fetch repositories
-      const reposResponse = await fetch(
-        "https://api.github.com/users/emmzyrayz/repos?per_page=100&sort=updated",
-        {headers, cache: "no-store"}
-      );
-
-      if (!reposResponse.ok) {
-        throw new Error(
-          `GitHub API error: ${reposResponse.status} ${reposResponse.statusText}`
-        );
-      }
-
-      const repos: GitHubRepo[] = await reposResponse.json();
-
-      const projectsData = await Promise.all(
-        // First filter: Only process repos that have a homepage
-        repos
-          .filter((repo) => repo.homepage !== null && repo.homepage !== "")
-          .map(async (repo: GitHubRepo) => {
-            try {
-              // Fetch languages with error handling
-              const languagesResponse = await fetch(repo.languages_url, {
-                headers,
-                cache: "no-store",
-              });
-
-              if (!languagesResponse.ok) {
-                throw new Error(
-                  `Failed to fetch languages: ${languagesResponse.status}`
-                );
-              }
-
-              const languages: Record<string, number> =
-                await languagesResponse.json();
-
-              // Calculate language percentages
-              const totalBytes = Object.values(languages).reduce(
-                (a, b) => a + b,
-                0
-              );
-
-              const technologiesWithPercentages = Object.entries(languages).map(
-                ([name, bytes]) => ({
-                  name,
-                  percentage: (bytes / totalBytes) * 100,
-                })
-              );
-
-              // Use repo description as fallback if README fetch fails
-              let description = repo.description || "No description available";
-
-              try {
-                const readmeResponse = await fetch(
-                  `https://api.github.com/repos/emmzyrayz/${repo.name}/readme`,
-                  {headers, cache: "no-store"}
-                );
-
-                if (readmeResponse.ok) {
-                  const readme: GitHubReadme = await readmeResponse.json();
-                  const decodedContent = atob(readme.content);
-                  const firstParagraph = decodedContent
-                    .split("\n\n")[0]
-                    .replace(/[#\n]/g, "")
-                    .trim();
-                  if (firstParagraph) {
-                    description = firstParagraph;
-                  }
-                }
-              } catch {
-                console.warn(`Could not fetch README for ${repo.name}`);
-              }
-
-              // Create the project object with explicit type
-              const project: Project = {
-                id: repo.id,
-                title: repo.name,
-                description,
-                technologies: technologiesWithPercentages,
-                image: `https://opengraph.githubassets.com/1/${repo.full_name}`,
-                githubLink: repo.html_url,
-                stars: repo.stargazers_count,
-                updatedAt: repo.updated_at,
-                createdAt: repo.created_at,
-              };
-
-              // Add liveLink since we know homepage exists (due to filter above)
-              project.liveLink = repo.homepage!; // '!' is safe here due to filter
-
-              // Add liveLink only if it exists
-              const deploymentUrl =
-                repo.homepage ||
-                (repo.has_pages
-                  ? `https://emmzyrayz.github.io/${repo.name}`
-                  : undefined);
-
-              if (deploymentUrl) {
-                project.liveLink = deploymentUrl;
-              }
-
-              return project;
-            } catch (error) {
-              console.error(`Error processing repository ${repo.name}:`, error);
-              return null;
-            }
-          })
-      );
-
-      // Type guard function
-      const isProject = (project: Project | null): project is Project => {
-        return project !== null;
-      };
-
-      const validProjects = projectsData.filter(isProject);
-
-      if (validProjects.length === 0) {
-        throw new Error("No valid projects found");
-      }
-
-      setProjects(validProjects);
-    } catch (error: unknown) {
+      const projects = await response.json();
+      setProjects(projects);
+    } catch (error) {
       setError("Failed to fetch projects. Please try again later.");
-      console.error("Error fetching projects:", error);
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
