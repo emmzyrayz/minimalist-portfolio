@@ -1,4 +1,3 @@
-import {NextApiRequest, NextApiResponse} from "next";
 import env from "@/utils/env";
 import {NextResponse} from "next/server";
 
@@ -19,10 +18,6 @@ interface Project {
   stars: number;
   updatedAt: string;
   createdAt: string;
-}
-
-interface ProjectCardProps extends Project {
-  isEvenIndex: boolean;
 }
 
 interface GitHubRepo {

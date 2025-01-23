@@ -4,7 +4,7 @@ import Image from // { StaticImageData }
 "next/image";
 import {FaGithub, FaExternalLinkAlt} from "react-icons/fa";
 import {debounce} from "lodash";
-import env from "@/utils/env";
+// import env from "@/utils/env";
 
 // Types
 interface Language {
@@ -29,23 +29,23 @@ interface ProjectCardProps extends Project {
   isEvenIndex: boolean;
 }
 
-interface GitHubRepo {
-  id: number;
-  name: string;
-  full_name: string;
-  description: string | null;
-  homepage: string | null;
-  html_url: string;
-  languages_url: string;
-  has_pages: boolean;
-  stargazers_count: number;
-  updated_at: string;
-  created_at: string;
-}
+// interface GitHubRepo {
+//   id: number;
+//   name: string;
+//   full_name: string;
+//   description: string | null;
+//   homepage: string | null;
+//   html_url: string;
+//   languages_url: string;
+//   has_pages: boolean;
+//   stargazers_count: number;
+//   updated_at: string;
+//   created_at: string;
+// }
 
-interface GitHubReadme {
-  content: string;
-}
+// interface GitHubReadme {
+//   content: string;
+// }
 
 
 
