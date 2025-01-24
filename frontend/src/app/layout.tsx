@@ -111,28 +111,28 @@ export default function RootLayout({
     };
   }, []);
 
-  const {valid, missing, available} = env.validateEnvVars();
-  if (!valid) {
-    console.error("Missing required environment variables:", missing);
-    console.log("Available environment variables:", available);
-  }
+  // const {valid, missing, available} = env.validateEnvVars();
+  // if (!valid) {
+    // console.error("Missing required environment variables:", missing);
+    // console.log("Available environment variables:", available);
+  // }
 
   // Add this somewhere during app initialization
-  console.log("Environment:", {
-    NODE_ENV: process.env.NODE_ENV,
-    envVarsPresent: Object.keys(process.env).filter(
-      (key) =>
-        key.includes("GITHUB") ||
-        key.includes("MONGODB") ||
-        key.includes("APP_URL") ||
-        key.includes("JWT") ||
-        key.includes("ENCRYPTION")
-    ),
-  });
+  // console.log("Environment:", {
+  //   NODE_ENV: process.env.NODE_ENV,
+  //   envVarsPresent: Object.keys(process.env).filter(
+  //     (key) =>
+  //       key.includes("GITHUB") ||
+  //       key.includes("MONGODB") ||
+  //       key.includes("APP_URL") ||
+  //       key.includes("JWT") ||
+  //       key.includes("ENCRYPTION")
+  //   ),
+  // });
 
   // Run validation
-  const validationResult = env.validateEnvVars();
-  console.log("Validation result:", validationResult);
+  // const validationResult = env.validateEnvVars();
+  // console.log("Validation result:", validationResult);
 
   // Define the pages where you want to hide the Navbar and Footer
   const hideNavbarFooterRoutes = [

@@ -700,9 +700,9 @@ const PortfolioDashboard: React.FC = () => {
       return isDuplicate ? prevMessages : [...prevMessages, newMsg];
     });
 
-    if (visitorId) {
-      console.log(`Message sent to visitor: ${visitorId}`);
-    }
+    // if (visitorId) {
+    //   console.log(`Message sent to visitor: ${visitorId}`);
+    // }
   };
 
   const updateItem = <T extends {id: string}>(

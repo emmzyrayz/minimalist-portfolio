@@ -19,14 +19,14 @@ async function test() {
 
     // Try to ping the database
     await db.command({ping: 1});
-    console.log("Successfully connected to MongoDB!");
+    // console.log("Successfully connected to MongoDB!");
 
     // List collections
-    const collections = await db.listCollections().toArray();
-    console.log(
-      "Available collections:",
-      collections.map((c) => c.name)
-    );
+    // const collections = await db.listCollections().toArray();
+    // console.log(
+    //   "Available collections:",
+    //   collections.map((c) => c.name)
+    // );
   } catch (error) {
     console.error("Database connection error:", error);
   } finally {

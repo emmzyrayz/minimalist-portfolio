@@ -50,8 +50,8 @@ export async function GET() {
       Authorization: `Bearer ${GITHUB_TOKEN}`,
     };
 
-    console.log("Token length:", GITHUB_TOKEN.length);
-    console.log("Token starts with:", GITHUB_TOKEN.substring(0, 10));
+    // console.log("Token length:", GITHUB_TOKEN.length);
+    // console.log("Token starts with:", GITHUB_TOKEN.substring(0, 10));
 
 
     // First, test the API connection
@@ -60,11 +60,11 @@ export async function GET() {
       cache: "no-store",
     });
 
-    console.log("Rate Limit Response Status:", testResponse.status);
-    console.log(
-      "Rate Limit Response Headers:",
-      Object.fromEntries(testResponse.headers)
-    );
+    // console.log("Rate Limit Response Status:", testResponse.status);
+    // console.log(
+    //   "Rate Limit Response Headers:",
+    //   Object.fromEntries(testResponse.headers)
+    // );
 
 
 
@@ -78,8 +78,8 @@ export async function GET() {
     }
 
     // Fetch and parse rate limit data for additional context
-    const rateLimitData = await testResponse.json();
-    console.log("Rate Limit Data:", JSON.stringify(rateLimitData, null, 2));
+    // const rateLimitData = await testResponse.json();
+    // console.log("Rate Limit Data:", JSON.stringify(rateLimitData, null, 2));
 
 
     // Add authorization if token is available
@@ -93,7 +93,7 @@ export async function GET() {
       {headers, cache: "no-store"}
     );
 
-    console.log("Repos Fetch Response:", reposResponse.status);
+    // console.log("Repos Fetch Response:", reposResponse.status);
 
     if (!reposResponse.ok) {
       const errorText = await reposResponse.text();
