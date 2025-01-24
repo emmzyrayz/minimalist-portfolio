@@ -690,7 +690,7 @@ const PortfolioDashboard: React.FC = () => {
   };
 
   // Message sending logic
-  const handleSendMessage = (newMsg: Message, visitorId?: string) => {
+  const handleSendMessage = (newMsg: Message) => {
     setMessages((prevMessages) => {
       const isDuplicate = prevMessages.some(
         (msg) =>

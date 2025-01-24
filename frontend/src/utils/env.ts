@@ -66,7 +66,7 @@ const ENV_CONFIG: Record<string, EnvConfig> = {
   },
 };
 
-function debugEnvVar(key: string): void {
+function debugEnvVar(_key: string): void {
   // if (process.env.NODE_ENV === "development") {
   //   // console.log(`Checking ${key}:`, {
   //   //   exists: process.env[key] !== undefined,

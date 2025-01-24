@@ -12,7 +12,7 @@ import {usePathname, useRouter} from "next/navigation";
 // Import the metadata
 import { baseMetadata } from "@/utils/metadata"; // Adjust the import path as needed
 import { AuthProvider, useAuth } from "@/context/authcontext";
-import env  from "@/utils/env";
+// import env  from "@/utils/env";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
