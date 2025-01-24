@@ -66,17 +66,17 @@ const ENV_CONFIG: Record<string, EnvConfig> = {
   },
 };
 
-function debugEnvVar(_key: string): void {
-  // if (process.env.NODE_ENV === "development") {
-  //   // console.log(`Checking ${key}:`, {
-  //   //   exists: process.env[key] !== undefined,
-  //   //   value: process.env[key] ? "[PRESENT]" : "[MISSING]",
-  //   // });
-  // }
-}
+// function debugEnvVar(key: string): void {
+//   // if (process.env.NODE_ENV === "development") {
+//   //   // console.log(`Checking ${key}:`, {
+//   //   //   exists: process.env[key] !== undefined,
+//   //   //   value: process.env[key] ? "[PRESENT]" : "[MISSING]",
+//   //   // });
+//   // }
+// }
 
 function getEnvVar(key: keyof typeof ENV_CONFIG): string {
-  debugEnvVar(key);
+  // debugEnvVar(key);
 
   const config = ENV_CONFIG[key];
 
